@@ -1,5 +1,6 @@
 <script>
 	import { onMount } from 'svelte';
+	import { goto } from '$app/navigation';
 	import { auth } from '$lib/stores/auth.js';
 	import { api } from '$lib/api.js';
 
@@ -13,13 +14,19 @@
 		target_amount: ''
 	};
 
-	onMount(async () => {
-		auth.subscribe((state) => {
+	onMount(() => {
+		auth.subscribe(async (state) => {
+			if (!state.initialized) return;
+
 			if (!state.isAuthenticated) {
-				window.location.href = '/login';
+				goto('/login');
+				return;
+			}
+
+			if (goals.length === 0 && loading) {
+				await loadGoals();
 			}
 		});
-		await loadGoals();
 	});
 
 	async function loadGoals() {

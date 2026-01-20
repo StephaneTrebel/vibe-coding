@@ -1,5 +1,6 @@
 <script>
 	import { onMount } from 'svelte';
+	import { goto } from '$app/navigation';
 	import { auth } from '$lib/stores/auth.js';
 	import { api } from '$lib/api.js';
 
@@ -22,13 +23,19 @@
 
 	$: categories = form.type === 'expense' ? expenseCategories : incomeCategories;
 
-	onMount(async () => {
-		auth.subscribe((state) => {
+	onMount(() => {
+		auth.subscribe(async (state) => {
+			if (!state.initialized) return;
+
 			if (!state.isAuthenticated) {
-				window.location.href = '/login';
+				goto('/login');
+				return;
+			}
+
+			if (transactions.length === 0 && loading) {
+				await loadTransactions();
 			}
 		});
-		await loadTransactions();
 	});
 
 	async function loadTransactions() {

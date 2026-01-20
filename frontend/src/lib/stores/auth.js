@@ -4,7 +4,8 @@ function createAuthStore() {
 	const { subscribe, set, update } = writable({
 		user: null,
 		token: null,
-		isAuthenticated: false
+		isAuthenticated: false,
+		initialized: false
 	});
 
 	return {
@@ -12,12 +13,12 @@ function createAuthStore() {
 		login: (user, token) => {
 			localStorage.setItem('token', token);
 			localStorage.setItem('user', JSON.stringify(user));
-			set({ user, token, isAuthenticated: true });
+			set({ user, token, isAuthenticated: true, initialized: true });
 		},
 		logout: () => {
 			localStorage.removeItem('token');
 			localStorage.removeItem('user');
-			set({ user: null, token: null, isAuthenticated: false });
+			set({ user: null, token: null, isAuthenticated: false, initialized: true });
 		},
 		init: () => {
 			const token = localStorage.getItem('token');
@@ -25,11 +26,14 @@ function createAuthStore() {
 			if (token && userStr) {
 				try {
 					const user = JSON.parse(userStr);
-					set({ user, token, isAuthenticated: true });
+					set({ user, token, isAuthenticated: true, initialized: true });
 				} catch {
 					localStorage.removeItem('token');
 					localStorage.removeItem('user');
+					set({ user: null, token: null, isAuthenticated: false, initialized: true });
 				}
+			} else {
+				set({ user: null, token: null, isAuthenticated: false, initialized: true });
 			}
 		}
 	};

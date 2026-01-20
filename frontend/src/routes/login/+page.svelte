@@ -1,4 +1,5 @@
 <script>
+	import { goto } from '$app/navigation';
 	import { auth } from '$lib/stores/auth.js';
 	import { api } from '$lib/api.js';
 
@@ -14,7 +15,7 @@
 		try {
 			const response = await api.login(email, password);
 			auth.login(response.user, response.token);
-			window.location.href = '/';
+			goto('/');
 		} catch (e) {
 			error = e.message;
 		} finally {

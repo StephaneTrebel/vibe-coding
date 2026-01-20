@@ -1,5 +1,6 @@
 <script>
 	import { onMount } from 'svelte';
+	import { goto } from '$app/navigation';
 	import { auth } from '$lib/stores/auth.js';
 	import { api } from '$lib/api.js';
 
@@ -9,14 +10,22 @@
 	let error = null;
 	let budgetAmount = '';
 	let currentMonth = new Date().toISOString().slice(0, 7);
+	let dataLoaded = false;
 
-	onMount(async () => {
-		auth.subscribe((state) => {
+	onMount(() => {
+		auth.subscribe(async (state) => {
+			if (!state.initialized) return;
+
 			if (!state.isAuthenticated) {
-				window.location.href = '/login';
+				goto('/login');
+				return;
+			}
+
+			if (!dataLoaded) {
+				dataLoaded = true;
+				await loadData();
 			}
 		});
-		await loadData();
 	});
 
 	async function loadData() {

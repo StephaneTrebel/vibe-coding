@@ -1,9 +1,11 @@
 <script>
 	import { onMount } from 'svelte';
+	import { goto } from '$app/navigation';
 	import { auth } from '$lib/stores/auth.js';
 	import '../app.css';
 
 	let isAuthenticated = false;
+	let initialized = false;
 
 	onMount(() => {
 		auth.init();
@@ -11,11 +13,12 @@
 
 	auth.subscribe((state) => {
 		isAuthenticated = state.isAuthenticated;
+		initialized = state.initialized;
 	});
 
 	function logout() {
 		auth.logout();
-		window.location.href = '/login';
+		goto('/login');
 	}
 </script>
 

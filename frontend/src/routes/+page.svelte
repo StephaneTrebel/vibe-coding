@@ -1,5 +1,6 @@
 <script>
 	import { onMount } from 'svelte';
+	import { goto } from '$app/navigation';
 	import { auth } from '$lib/stores/auth.js';
 	import { api } from '$lib/api.js';
 
@@ -7,20 +8,25 @@
 	let loading = true;
 	let error = null;
 
-	onMount(async () => {
-		auth.subscribe((state) => {
+	onMount(() => {
+		auth.subscribe(async (state) => {
+			if (!state.initialized) return;
+
 			if (!state.isAuthenticated) {
-				window.location.href = '/login';
+				goto('/login');
+				return;
+			}
+
+			if (!dashboard) {
+				try {
+					dashboard = await api.getDashboard();
+				} catch (e) {
+					error = e.message;
+				} finally {
+					loading = false;
+				}
 			}
 		});
-
-		try {
-			dashboard = await api.getDashboard();
-		} catch (e) {
-			error = e.message;
-		} finally {
-			loading = false;
-		}
 	});
 
 	function formatEuro(amount) {
