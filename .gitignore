@@ -1,0 +1,25 @@
+# Dependencies
+node_modules/
+target/
+
+# Environment
+.env
+.env.local
+.env.production
+
+# Claude Code
+.claude/
+
+# Database
+data/*.db
+data/*.db-journal
+data/*.db-wal
+data/*.db-shm
+
+# Build outputs
+frontend/build/
+frontend/.svelte-kit/
+backend/target/
+
+# Logs
+*.log
