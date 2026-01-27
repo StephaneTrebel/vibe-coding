@@ -1,8 +1,6 @@
 <script>
 	import { onMount } from 'svelte';
-	import { goto } from '$app/navigation';
-	import { auth } from '$lib/stores/auth.js';
-	import { api } from '$lib/api.js';
+	import { db } from '$lib/db.js';
 
 	let transactions = [];
 	let loading = true;
@@ -23,24 +21,13 @@
 
 	$: categories = form.type === 'expense' ? expenseCategories : incomeCategories;
 
-	onMount(() => {
-		auth.subscribe(async (state) => {
-			if (!state.initialized) return;
-
-			if (!state.isAuthenticated) {
-				goto('/login');
-				return;
-			}
-
-			if (transactions.length === 0 && loading) {
-				await loadTransactions();
-			}
-		});
+	onMount(async () => {
+		await loadTransactions();
 	});
 
 	async function loadTransactions() {
 		try {
-			transactions = await api.getTransactions();
+			transactions = await db.getTransactions();
 		} catch (e) {
 			error = e.message;
 		} finally {
@@ -71,9 +58,9 @@
 			};
 
 			if (editingId) {
-				await api.updateTransaction(editingId, data);
+				await db.updateTransaction(editingId, data);
 			} else {
-				await api.createTransaction(data);
+				await db.createTransaction(data);
 			}
 
 			resetForm();
@@ -85,7 +72,7 @@
 
 	function editTransaction(tx) {
 		form = {
-			type: tx.transaction_type,
+			type: tx.type,
 			amount: tx.amount.toString(),
 			category: tx.category,
 			description: tx.description || '',
@@ -98,7 +85,7 @@
 	async function deleteTransaction(id) {
 		if (confirm('Voulez-vous vraiment supprimer cette transaction ?')) {
 			try {
-				await api.deleteTransaction(id);
+				await db.deleteTransaction(id);
 				await loadTransactions();
 			} catch (e) {
 				error = e.message;
@@ -201,8 +188,8 @@
 				<div class="card transaction-item">
 					<div class="tx-info">
 						<div class="tx-main">
-							<span class="tx-type" class:income={tx.transaction_type === 'income'} class:expense={tx.transaction_type === 'expense'}>
-								{getTypeLabel(tx.transaction_type)}
+							<span class="tx-type" class:income={tx.type === 'income'} class:expense={tx.type === 'expense'}>
+								{getTypeLabel(tx.type)}
 							</span>
 							<span class="tx-category">{tx.category}</span>
 						</div>
@@ -212,8 +199,8 @@
 						<p class="tx-date text-muted">{formatDate(tx.date)}</p>
 					</div>
 					<div class="tx-right">
-						<p class="tx-amount" class:text-success={tx.transaction_type === 'income'} class:text-danger={tx.transaction_type === 'expense'}>
-							{tx.transaction_type === 'income' ? '+' : '-'}{formatEuro(tx.amount)}
+						<p class="tx-amount" class:text-success={tx.type === 'income'} class:text-danger={tx.type === 'expense'}>
+							{tx.type === 'income' ? '+' : '-'}{formatEuro(tx.amount)}
 						</p>
 						<div class="tx-actions">
 							<button class="small secondary" onclick={() => editTransaction(tx)}>Modifier</button>

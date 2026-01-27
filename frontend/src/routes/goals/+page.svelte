@@ -1,8 +1,6 @@
 <script>
 	import { onMount } from 'svelte';
-	import { goto } from '$app/navigation';
-	import { auth } from '$lib/stores/auth.js';
-	import { api } from '$lib/api.js';
+	import { db } from '$lib/db.js';
 
 	let goals = [];
 	let loading = true;
@@ -14,24 +12,13 @@
 		target_amount: ''
 	};
 
-	onMount(() => {
-		auth.subscribe(async (state) => {
-			if (!state.initialized) return;
-
-			if (!state.isAuthenticated) {
-				goto('/login');
-				return;
-			}
-
-			if (goals.length === 0 && loading) {
-				await loadGoals();
-			}
-		});
+	onMount(async () => {
+		await loadGoals();
 	});
 
 	async function loadGoals() {
 		try {
-			goals = await api.getGoals();
+			goals = await db.getGoals();
 		} catch (e) {
 			error = e.message;
 		} finally {
@@ -46,7 +33,7 @@
 				error = 'Veuillez entrer un nom et un montant valides';
 				return;
 			}
-			await api.createGoal(form.name, target);
+			await db.createGoal(form.name, target);
 			form = { name: '', target_amount: '' };
 			showForm = false;
 			error = null;
@@ -60,7 +47,7 @@
 		try {
 			const newAmount = Math.max(0, goal.current_amount + amount);
 			const achieved = newAmount >= goal.target_amount;
-			await api.updateGoal(goal.id, {
+			await db.updateGoal(goal.id, {
 				current_amount: newAmount,
 				achieved
 			});
@@ -73,7 +60,7 @@
 	async function deleteGoal(id) {
 		if (confirm('Voulez-vous vraiment supprimer cet objectif ?')) {
 			try {
-				await api.deleteGoal(id);
+				await db.deleteGoal(id);
 				await loadGoals();
 			} catch (e) {
 				error = e.message;

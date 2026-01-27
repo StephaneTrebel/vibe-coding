@@ -144,33 +144,72 @@ teen-budget-app/
 
 ---
 
-## Phases de transformation
+## Phases de transformation (découpage détaillé)
 
 ### Phase 1 : Préparation
-1. Configurer SvelteKit pour génération statique (`@sveltejs/adapter-static`)
-2. Supprimer les dépendances backend inutiles
-3. Créer le manifeste PWA et les icônes
+
+| Sous-phase | Description | Statut |
+|------------|-------------|--------|
+| 1.1 | Adapter-static : installer et configurer `@sveltejs/adapter-static` | Fait |
+| 1.2 | Manifeste PWA : créer `static/manifest.json` et lien dans `app.html` | Fait |
+| 1.3 | Icones PWA : créer `static/icons/icon-192.png` et `icon-512.png` | Fait |
+| 1.4 | Meta tags PWA : ajouter theme-color, apple-touch-icon dans `app.html` | Fait |
+
+---
 
 ### Phase 2 : IndexedDB
-1. Créer `db.js` avec les opérations CRUD
-2. Initialiser le schéma IndexedDB au premier lancement
-3. Migrer les appels `api.*` vers `db.*` dans chaque page
+
+**Partie A : Création de db.js**
+
+| Sous-phase | Description | Statut |
+|------------|-------------|--------|
+| 2.1 | Squelette IndexedDB : créer `db.js` avec initialisation et schéma (3 stores) | Fait |
+| 2.2 | CRUD Transactions : `getTransactions`, `createTransaction`, `updateTransaction`, `deleteTransaction` | Fait |
+| 2.3 | CRUD Budgets : `getBudget`, `setBudget` | Fait |
+| 2.4 | CRUD Goals : `getGoals`, `createGoal`, `updateGoal`, `deleteGoal` | Fait |
+| 2.5 | Dashboard : `getDashboard` (calcul local à partir des transactions) | Fait |
+
+**Partie B : Migration des pages**
+
+| Sous-phase | Description | Statut |
+|------------|-------------|--------|
+| 2.6 | Migrer `/transactions` : remplacer `api.*` par `db.*` | Fait |
+| 2.7 | Migrer `/budget` : remplacer `api.*` par `db.*` | Fait |
+| 2.8 | Migrer `/goals` : remplacer `api.*` par `db.*` | Fait |
+| 2.9 | Migrer `/` (Dashboard) : remplacer `api.*` par `db.*` | Fait |
+
+---
 
 ### Phase 3 : Nettoyage authentification
-1. Supprimer `auth.js` et les pages login/register
-2. Simplifier `+layout.svelte` (toujours afficher la navbar)
-3. Supprimer les guards d'authentification des pages
+
+| Sous-phase | Description | Statut |
+|------------|-------------|--------|
+| 3.1 | Supprimer `auth.js` et les pages `/login` et `/register` | Fait |
+| 3.2 | Simplifier `+layout.svelte` (toujours afficher la navbar) | - |
+| 3.3 | Supprimer les guards d'authentification des pages | - |
+| 3.4 | Supprimer les fonctions auth de `api.js` (ou supprimer `api.js` entièrement) | - |
+
+---
 
 ### Phase 4 : Service Worker
-1. Implémenter le Service Worker pour le cache offline
-2. Configurer la stratégie de mise à jour (stale-while-revalidate)
-3. Enregistrer le Service Worker dans l'app
+
+| Sous-phase | Description | Statut |
+|------------|-------------|--------|
+| 4.1 | Créer `src/service-worker.js` avec stratégie cache-first | - |
+| 4.2 | Enregistrer le Service Worker dans l'app | - |
+| 4.3 | Configurer la stratégie de mise à jour (stale-while-revalidate) | - |
+
+---
 
 ### Phase 5 : Finalisation
-1. Supprimer le dossier `backend/`
-2. Supprimer `docker-compose.yml`
-3. Tester l'installation PWA sur mobile
-4. Documenter le déploiement statique
+
+| Sous-phase | Description | Statut |
+|------------|-------------|--------|
+| 5.1 | Supprimer le dossier `backend/` | - |
+| 5.2 | Supprimer `docker-compose.yml` | - |
+| 5.3 | Nettoyer les dépendances inutiles dans `package.json` | - |
+| 5.4 | Tester l'installation PWA sur mobile | - |
+| 5.5 | Documenter le déploiement statique | - |
 
 ---
 

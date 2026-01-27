@@ -1,8 +1,6 @@
 <script>
 	import { onMount } from 'svelte';
-	import { goto } from '$app/navigation';
-	import { auth } from '$lib/stores/auth.js';
-	import { api } from '$lib/api.js';
+	import { db } from '$lib/db.js';
 
 	let budget = null;
 	let spent = 0;
@@ -10,30 +8,17 @@
 	let error = null;
 	let budgetAmount = '';
 	let currentMonth = new Date().toISOString().slice(0, 7);
-	let dataLoaded = false;
 
-	onMount(() => {
-		auth.subscribe(async (state) => {
-			if (!state.initialized) return;
-
-			if (!state.isAuthenticated) {
-				goto('/login');
-				return;
-			}
-
-			if (!dataLoaded) {
-				dataLoaded = true;
-				await loadData();
-			}
-		});
+	onMount(async () => {
+		await loadData();
 	});
 
 	async function loadData() {
 		loading = true;
 		try {
 			const [budgetData, transactions] = await Promise.all([
-				api.getBudget(currentMonth),
-				api.getTransactions({ month: currentMonth, type: 'expense' })
+				db.getBudget(currentMonth),
+				db.getTransactions({ month: currentMonth, type: 'expense' })
 			]);
 
 			budget = budgetData;
@@ -53,7 +38,7 @@
 				error = 'Veuillez entrer un montant valide';
 				return;
 			}
-			budget = await api.setBudget(currentMonth, amount);
+			budget = await db.setBudget(currentMonth, amount);
 			error = null;
 		} catch (e) {
 			error = e.message;
