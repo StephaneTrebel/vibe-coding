@@ -23,3 +23,7 @@ backend/target/
 
 # Logs
 *.log
+
+# Playwright
+playwright-report
+test-results
