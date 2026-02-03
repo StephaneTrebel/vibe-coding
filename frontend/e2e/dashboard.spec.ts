@@ -1,38 +1,29 @@
 import { test, expect } from '@playwright/test';
-import { authenticateTestUser, cleanupTestData } from './helpers/auth';
 
 test.describe('Dashboard', () => {
-	test.beforeEach(async ({ page }) => {
-		await authenticateTestUser(page);
-		await cleanupTestData(page);
-	});
-
 	test('display-total-stats', async ({ page }) => {
 		// Créer plusieurs transactions
 		await page.goto('/transactions');
+		await expect(page.locator('text=Aucune transaction')).toBeVisible();
 
 		// Transaction 1
 		await page.locator('button:has-text("Ajouter")').click();
-		// Attendre que le formulaire soit visible
 		await expect(page.locator('#type')).toBeVisible();
 		await page.selectOption('#type', 'income');
 		await page.fill('#amount', '500.00');
 		await page.selectOption('#category', 'Argent de poche');
 		await page.fill('#date', '2024-01-10');
 		await page.locator('button[type="submit"]:has-text("Ajouter")').click();
-		// Attendre que la transaction apparaisse
 		await expect(page.locator('text=Argent de poche')).toBeVisible();
 
 		// Transaction 2
 		await page.locator('button:has-text("Ajouter")').click();
-		// Attendre que le formulaire soit visible
 		await expect(page.locator('#type')).toBeVisible();
 		await page.selectOption('#type', 'expense');
 		await page.fill('#amount', '349.50');
 		await page.selectOption('#category', 'Alimentation');
 		await page.fill('#date', '2024-01-15');
 		await page.locator('button[type="submit"]:has-text("Ajouter")').click();
-		// Attendre que la transaction apparaisse
 		await expect(page.locator('text=Alimentation')).toBeVisible();
 
 		await page.goto('/');
@@ -46,29 +37,25 @@ test.describe('Dashboard', () => {
 	});
 
 	test('display-recent-transactions', async ({ page }) => {
-		// Créer quelques transactions
 		await page.goto('/transactions');
+		await expect(page.locator('text=Aucune transaction')).toBeVisible();
 
 		await page.locator('button:has-text("Ajouter")').click();
-		// Attendre que le formulaire soit visible
 		await expect(page.locator('#type')).toBeVisible();
 		await page.selectOption('#type', 'expense');
 		await page.fill('#amount', '15.50');
 		await page.selectOption('#category', 'Alimentation');
 		await page.fill('#date', '2024-01-15');
 		await page.locator('button[type="submit"]:has-text("Ajouter")').click();
-		// Attendre que la transaction apparaisse
 		await expect(page.locator('text=Alimentation')).toBeVisible();
 
 		await page.locator('button:has-text("Ajouter")').click();
-		// Attendre que le formulaire soit visible
 		await expect(page.locator('#type')).toBeVisible();
 		await page.selectOption('#type', 'income');
 		await page.fill('#amount', '200.00');
 		await page.selectOption('#category', 'Argent de poche');
 		await page.fill('#date', '2024-01-10');
 		await page.locator('button[type="submit"]:has-text("Ajouter")').click();
-		// Attendre que la transaction apparaisse
 		await expect(page.locator('text=Argent de poche')).toBeVisible();
 
 		await page.goto('/');
@@ -81,18 +68,12 @@ test.describe('Dashboard', () => {
 
 	test('empty-state', async ({ page }) => {
 		await page.goto('/');
-
-		// Vérifier le message d'état vide
 		await expect(page.locator('text=Aucune transaction')).toBeVisible();
 	});
 
 	test('link-to-transactions', async ({ page }) => {
 		await page.goto('/');
-
-		// Cliquer sur "Voir tout"
 		await page.locator('text=Voir tout').click();
-
-		// Vérifier la navigation
 		await expect(page).toHaveURL('/transactions');
 	});
 });

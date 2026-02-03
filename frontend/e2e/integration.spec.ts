@@ -1,12 +1,6 @@
 import { test, expect } from '@playwright/test';
-import { authenticateTestUser, cleanupTestData } from './helpers/auth';
 
 test.describe('Integration', () => {
-	test.beforeEach(async ({ page }) => {
-		await authenticateTestUser(page);
-		await cleanupTestData(page);
-	});
-
 	test('expense-affects-budget', async ({ page }) => {
 		const currentMonth = new Date().toISOString().slice(0, 7);
 
@@ -21,12 +15,16 @@ test.describe('Integration', () => {
 
 		// Créer une dépense
 		await page.goto('/transactions');
+		await expect(page.locator('text=Aucune transaction')).toBeVisible();
+
 		await page.locator('button:has-text("Ajouter")').click();
+		await expect(page.locator('#type')).toBeVisible();
 		await page.selectOption('#type', 'expense');
 		await page.fill('#amount', '100.00');
 		await page.selectOption('#category', 'Transport');
 		await page.fill('#date', `${currentMonth}-10`);
 		await page.locator('button[type="submit"]:has-text("Ajouter")').click();
+		await expect(page.locator('text=Transport')).toBeVisible();
 
 		// Retourner au budget
 		await page.goto('/budget');
@@ -44,7 +42,6 @@ test.describe('Integration', () => {
 	test('multiple-transactions-cumulative', async ({ page }) => {
 		const currentMonth = new Date().toISOString().slice(0, 7);
 
-		// Créer plusieurs transactions
 		const transactions = [
 			{ type: 'income', amount: '200.00', category: 'Argent de poche' },
 			{ type: 'expense', amount: '50.00', category: 'Alimentation' },
@@ -53,17 +50,20 @@ test.describe('Integration', () => {
 		];
 
 		await page.goto('/transactions');
+		await expect(page.locator('text=Aucune transaction')).toBeVisible();
 
 		for (const tx of transactions) {
+			// Attendre que le formulaire soit fermé avant de rouvrir
+			await expect(page.locator('#type')).not.toBeVisible();
 			await page.locator('button:has-text("Ajouter")').click();
+			await expect(page.locator('#type')).toBeVisible();
 			await page.selectOption('#type', tx.type);
 			await page.fill('#amount', tx.amount);
 			await page.selectOption('#category', tx.category);
 			await page.fill('#date', `${currentMonth}-15`);
 			await page.locator('button[type="submit"]:has-text("Ajouter")').click();
-
-			// Attendre un peu pour être sûr que la transaction est créée
-			await page.waitForTimeout(500);
+			// Attendre que la transaction apparaisse dans la liste
+			await expect(page.locator(`.tx-category:has-text("${tx.category}")`)).toBeVisible();
 		}
 
 		// Retourner au dashboard

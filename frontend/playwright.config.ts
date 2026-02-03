@@ -2,10 +2,9 @@ import { defineConfig, devices } from '@playwright/test';
 
 export default defineConfig({
 	testDir: './e2e',
-	fullyParallel: false, // Tests séquentiels pour éviter conflits DB
+	fullyParallel: true,
 	forbidOnly: !!process.env.CI,
 	retries: process.env.CI ? 2 : 0,
-	workers: 1, // Un seul worker pour éviter conflits DB
 	reporter: 'html',
 
 	use: {
