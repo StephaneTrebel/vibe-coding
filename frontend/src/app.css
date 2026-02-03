@@ -1,14 +1,14 @@
 :root {
-	--primary: #6366f1;
-	--primary-dark: #4f46e5;
-	--secondary: #10b981;
-	--danger: #ef4444;
+	--primary: #a5b4fc;
+	--primary-dark: #818cf8;
+	--secondary: #34d399;
+	--danger: #fb9494;
 	--warning: #f59e0b;
 	--bg: #0f172a;
 	--bg-card: #1e293b;
 	--bg-input: #334155;
 	--text: #f8fafc;
-	--text-muted: #94a3b8;
+	--text-muted: #a8b8cc;
 	--border: #475569;
 	--radius: 12px;
 }
@@ -47,11 +47,12 @@ button {
 
 button.primary {
 	background: var(--primary);
-	color: white;
+	color: #1e293b;
 }
 
 button.primary:hover {
 	background: var(--primary-dark);
+	color: #1e293b;
 }
 
 button.secondary {
@@ -65,7 +66,7 @@ button.secondary:hover {
 
 button.danger {
 	background: var(--danger);
-	color: white;
+	color: #1e293b;
 }
 
 button.small {

@@ -126,7 +126,7 @@
 			{#each goals as goal}
 				<div class="card goal-card" class:achieved={goal.achieved}>
 					<div class="goal-header">
-						<h3>{goal.name}</h3>
+						<h2 class="goal-name">{goal.name}</h2>
 						{#if goal.achieved}
 							<span class="badge achieved-badge">Atteint !</span>
 						{/if}
@@ -193,7 +193,7 @@
 
 	.achieved-badge {
 		background: var(--secondary);
-		color: white;
+		color: #1e293b;
 	}
 
 	.goal-amounts {

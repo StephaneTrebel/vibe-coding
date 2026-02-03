@@ -21,7 +21,7 @@ test.describe('Goals', () => {
 		await expect(page.locator('text=Aucun objectif d\'epargne')).not.toBeVisible();
 
 		// Vérifier la carte
-		await expect(page.locator('h3')).toHaveText('Nouveau telephone');
+		await expect(page.locator('.goal-name')).toHaveText('Nouveau telephone');
 		await expect(page.locator('.current')).toContainText('0,00');
 		await expect(page.locator('text=sur')).toContainText('800,00');
 		await expect(page.locator('.progress-text')).toHaveText('0% atteint');
@@ -64,7 +64,7 @@ test.describe('Goals', () => {
 		await page.fill('#name', 'Vacances');
 		await page.fill('#target', '500');
 		await page.locator('button[type="submit"]').click();
-		await expect(page.locator('h3')).toHaveText('Vacances');
+		await expect(page.locator('.goal-name')).toHaveText('Vacances');
 
 		// Rouvrir le formulaire
 		await page.locator('button:has-text("Nouvel objectif")').click();
@@ -248,7 +248,7 @@ test.describe('Goals', () => {
 		await page.fill('#name', 'A supprimer');
 		await page.fill('#target', '100');
 		await page.locator('button[type="submit"]').click();
-		await expect(page.locator('h3')).toHaveText('A supprimer');
+		await expect(page.locator('.goal-name')).toHaveText('A supprimer');
 
 		// Accepter le dialog de confirmation
 		page.on('dialog', (dialog) => dialog.accept());
@@ -276,14 +276,14 @@ test.describe('Goals', () => {
 			await page.fill('#name', goal.name);
 			await page.fill('#target', goal.target);
 			await page.locator('button[type="submit"]').click();
-			await expect(page.locator(`h3:has-text("${goal.name}")`)).toBeVisible();
+			await expect(page.locator(`.goal-name:has-text("${goal.name}")`)).toBeVisible();
 		}
 
 		// Vérifier les 3 cartes
 		await expect(page.locator('.goal-card')).toHaveCount(3);
-		await expect(page.locator('h3:has-text("Telephone")')).toBeVisible();
-		await expect(page.locator('h3:has-text("Vacances")')).toBeVisible();
-		await expect(page.locator('h3:has-text("Velo")')).toBeVisible();
+		await expect(page.locator('.goal-name:has-text("Telephone")')).toBeVisible();
+		await expect(page.locator('.goal-name:has-text("Vacances")')).toBeVisible();
+		await expect(page.locator('.goal-name:has-text("Velo")')).toBeVisible();
 
 		// Vérifier que chaque objectif a ses propres boutons de progression
 		await expect(page.locator('.goal-actions')).toHaveCount(3);
