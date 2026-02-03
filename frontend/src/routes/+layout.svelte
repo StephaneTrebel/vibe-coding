@@ -1,39 +1,16 @@
 <script>
-	import { onMount } from 'svelte';
-	import { goto } from '$app/navigation';
-	import { auth } from '$lib/stores/auth.js';
 	import '../app.css';
-
-	let isAuthenticated = false;
-	let initialized = false;
-
-	onMount(() => {
-		auth.init();
-	});
-
-	auth.subscribe((state) => {
-		isAuthenticated = state.isAuthenticated;
-		initialized = state.initialized;
-	});
-
-	function logout() {
-		auth.logout();
-		goto('/login');
-	}
 </script>
 
-{#if isAuthenticated}
-	<nav class="navbar">
-		<div class="nav-brand">Mon Budget</div>
-		<div class="nav-links">
-			<a href="/">Tableau de bord</a>
-			<a href="/transactions">Transactions</a>
-			<a href="/budget">Budget</a>
-			<a href="/goals">Objectifs</a>
-			<button class="small secondary" onclick={logout}>Deconnexion</button>
-		</div>
-	</nav>
-{/if}
+<nav class="navbar">
+	<div class="nav-brand">Mon Budget</div>
+	<div class="nav-links">
+		<a href="/">Tableau de bord</a>
+		<a href="/transactions">Transactions</a>
+		<a href="/budget">Budget</a>
+		<a href="/goals">Objectifs</a>
+	</div>
+</nav>
 
 <main>
 	<slot />
