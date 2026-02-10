@@ -2,11 +2,12 @@
   "name": "teen-budget-frontend",
   "version": "0.1.0",
   "private": true,
-  "scripts": {
-    "dev": "vite dev",
-    "prebuild": "node scripts/generate-manifest.js",
-    "build": "vite build",
-    "preview": "vite preview",
+	"scripts": {
+		"dev": "vite dev",
+		"prebuild": "node scripts/generate-manifest.js",
+		"build": "vite build",
+		"postbuild": "node scripts/copy-404.js",
+		"preview": "vite preview",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:headed": "playwright test --headed",
