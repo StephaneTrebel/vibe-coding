@@ -77,9 +77,15 @@
 	<h1 class="mb-3">Budget mensuel</h1>
 
 	<div class="month-nav card mb-3">
-		<button class="secondary" onclick={() => changeMonth(-1)}>Precedent</button>
-		<h2>{formatMonth(currentMonth)}</h2>
-		<button class="secondary" onclick={() => changeMonth(1)}>Suivant</button>
+		<button class="secondary" onclick={() => changeMonth(-1)} aria-label="Mois précédent">
+			<span class="btn-text">Precedent</span>
+			<span class="btn-icon" aria-hidden="true">←</span>
+		</button>
+		<h2 class="month-title">{formatMonth(currentMonth)}</h2>
+		<button class="secondary" onclick={() => changeMonth(1)} aria-label="Mois suivant">
+			<span class="btn-text">Suivant</span>
+			<span class="btn-icon" aria-hidden="true">→</span>
+		</button>
 	</div>
 
 	{#if error}
@@ -167,6 +173,36 @@
 
 	.month-nav h2 {
 		text-transform: capitalize;
+	}
+
+	.month-nav .btn-icon {
+		display: none;
+	}
+
+	@media (max-width: 767px) {
+		.month-nav {
+			gap: 8px;
+		}
+
+		.month-nav .btn-text {
+			display: none;
+		}
+
+		.month-nav .btn-icon {
+			display: inline;
+			font-size: 1.5rem;
+		}
+
+		.month-nav button {
+			min-width: 44px;
+			min-height: 44px;
+			padding: 8px;
+		}
+
+		.month-title {
+			font-size: 1.1rem;
+			text-align: center;
+		}
 	}
 
 	.summary-stats {

@@ -169,6 +169,12 @@
 		gap: 20px;
 	}
 
+	@media (max-width: 767px) {
+		.goals-grid {
+			grid-template-columns: 1fr;
+		}
+	}
+
 	.goal-card {
 		position: relative;
 	}

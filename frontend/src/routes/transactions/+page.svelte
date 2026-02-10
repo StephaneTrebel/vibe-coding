@@ -203,8 +203,14 @@
 							{tx.type === 'income' ? '+' : '-'}{formatEuro(tx.amount)}
 						</p>
 						<div class="tx-actions">
-							<button class="small secondary" onclick={() => editTransaction(tx)}>Modifier</button>
-							<button class="small danger" onclick={() => deleteTransaction(tx.id)}>Supprimer</button>
+							<button class="small secondary" onclick={() => editTransaction(tx)} aria-label="Modifier">
+								<span class="btn-text">Modifier</span>
+								<span class="btn-icon" aria-hidden="true">✏️</span>
+							</button>
+							<button class="small danger" onclick={() => deleteTransaction(tx.id)} aria-label="Supprimer">
+								<span class="btn-text">Supprimer</span>
+								<span class="btn-icon" aria-hidden="true">🗑️</span>
+							</button>
 						</div>
 					</div>
 				</div>
@@ -279,10 +285,49 @@
 		gap: 8px;
 	}
 
+	.tx-actions .btn-icon {
+		display: none;
+	}
+
 	.error {
 		color: var(--danger);
 		background: rgba(239, 68, 68, 0.1);
 		padding: 12px;
 		border-radius: var(--radius);
+	}
+
+	/* === RESPONSIVE : MOBILE (< 768px) === */
+	@media (max-width: 767px) {
+		.transaction-item {
+			flex-direction: column;
+			gap: 12px;
+			align-items: stretch;
+		}
+
+		.tx-right {
+			text-align: left;
+			display: flex;
+			flex-direction: column;
+			gap: 8px;
+		}
+
+		.tx-actions {
+			justify-content: flex-start;
+		}
+
+		.tx-actions button {
+			min-width: 44px;
+			min-height: 44px;
+		}
+
+		/* Masquer texte, afficher icône */
+		.tx-actions .btn-text {
+			display: none;
+		}
+
+		.tx-actions .btn-icon {
+			display: inline;
+			font-size: 1.2rem;
+		}
 	}
 </style>

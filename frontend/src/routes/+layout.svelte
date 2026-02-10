@@ -29,7 +29,7 @@
 
 	<!-- Overlay background (mobile uniquement) -->
 	{#if menuOpen}
-		<div class="overlay" on:click={toggleMenu} role="button" tabindex="-1"></div>
+		<div class="overlay" on:click={toggleMenu} on:keydown={(e) => e.key === 'Escape' && toggleMenu()} role="button" tabindex="-1"></div>
 	{/if}
 </nav>
 
