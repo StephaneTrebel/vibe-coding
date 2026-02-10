@@ -185,9 +185,9 @@ teen-budget-app/
 | Sous-phase | Description | Statut |
 |------------|-------------|--------|
 | 3.1 | Supprimer `auth.js` et les pages `/login` et `/register` | Fait |
-| 3.2 | Simplifier `+layout.svelte` (toujours afficher la navbar) | - |
-| 3.3 | Supprimer les guards d'authentification des pages | - |
-| 3.4 | Supprimer les fonctions auth de `api.js` (ou supprimer `api.js` entièrement) | - |
+| 3.2 | Simplifier `+layout.svelte` (toujours afficher la navbar) | Fait |
+| 3.3 | Supprimer les guards d'authentification des pages | Fait |
+| 3.4 | Supprimer les fonctions auth de `api.js` (ou supprimer `api.js` entièrement) | Fait |
 
 ---
 
@@ -195,9 +195,9 @@ teen-budget-app/
 
 | Sous-phase | Description | Statut |
 |------------|-------------|--------|
-| 4.1 | Créer `src/service-worker.js` avec stratégie cache-first | - |
-| 4.2 | Enregistrer le Service Worker dans l'app | - |
-| 4.3 | Configurer la stratégie de mise à jour (stale-while-revalidate) | - |
+| 4.1 | Créer `src/service-worker.js` avec stratégie cache-first | Fait |
+| 4.2 | Enregistrer le Service Worker dans l'app | Fait |
+| 4.3 | Configurer la stratégie de mise à jour (stale-while-revalidate) | Fait |
 
 ---
 
@@ -205,11 +205,11 @@ teen-budget-app/
 
 | Sous-phase | Description | Statut |
 |------------|-------------|--------|
-| 5.1 | Supprimer le dossier `backend/` | - |
-| 5.2 | Supprimer `docker-compose.yml` | - |
-| 5.3 | Nettoyer les dépendances inutiles dans `package.json` | - |
-| 5.4 | Tester l'installation PWA sur mobile | - |
-| 5.5 | Documenter le déploiement statique | - |
+| 5.1 | Supprimer le dossier `backend/` | Annulé (conservé pour référence) |
+| 5.2 | Supprimer `docker-compose.yml` | Fait |
+| 5.3 | Nettoyer les dépendances inutiles dans `package.json` | Fait |
+| 5.4 | Tester l'installation PWA sur mobile | À tester manuellement |
+| 5.5 | Documenter le déploiement statique | Fait |
 
 ---
 
