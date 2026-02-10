@@ -63,23 +63,6 @@ Pour supprimer le base path, modifiez `.github/workflows/deploy.yml` :
 2. Configurer un enregistrement DNS CNAME pointant vers `username.github.io`
 3. Supprimer le BASE_PATH dans le workflow (comme ci-dessus)
 
-## Déploiement sur d'autres plateformes
-
-### Netlify
-
-[![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start)
-
-Configuration :
-- **Build command** : `cd frontend && npm run build`
-- **Publish directory** : `frontend/build`
-
-### Vercel
-
-```bash
-cd frontend
-npx vercel --prod
-```
-
 ### Hébergement statique générique
 
 1. Build l'application :
