@@ -1,5 +1,7 @@
 import { defineConfig, devices } from '@playwright/test';
 
+const BASE_PATH = process.env.BASE_PATH || '';
+
 export default defineConfig({
 	testDir: './e2e',
 	fullyParallel: true,
@@ -8,7 +10,7 @@ export default defineConfig({
 	reporter: 'html',
 
 	use: {
-		baseURL: 'http://localhost:5173',
+		baseURL: `http://localhost:5173${BASE_PATH}`,
 		trace: 'on-first-retry',
 		screenshot: 'only-on-failure',
 	},
