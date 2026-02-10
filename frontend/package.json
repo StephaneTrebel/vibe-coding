@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "vite dev",
+    "prebuild": "node scripts/generate-manifest.js",
     "build": "vite build",
     "preview": "vite preview",
     "test:e2e": "playwright test",
