@@ -1,5 +1,6 @@
 <script>
 	import { onMount } from 'svelte';
+	import { base } from '$app/paths';
 	import { db } from '$lib/db.js';
 
 	let dashboard = null;
@@ -81,7 +82,7 @@
 			<div class="card">
 				<div class="flex-between mb-2">
 					<h2>Transactions recentes</h2>
-					<a href="/transactions">Voir tout</a>
+					<a href="{base}/transactions">Voir tout</a>
 				</div>
 
 				{#if dashboard.recent_transactions.length === 0}

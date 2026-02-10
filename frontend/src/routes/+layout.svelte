@@ -1,14 +1,15 @@
 <script>
+	import { base } from '$app/paths';
 	import '../app.css';
 </script>
 
 <nav class="navbar">
 	<div class="nav-brand">Mon Budget</div>
 	<div class="nav-links">
-		<a href="/">Tableau de bord</a>
-		<a href="/transactions">Transactions</a>
-		<a href="/budget">Budget</a>
-		<a href="/goals">Objectifs</a>
+		<a href="{base}/">Tableau de bord</a>
+		<a href="{base}/transactions">Transactions</a>
+		<a href="{base}/budget">Budget</a>
+		<a href="{base}/goals">Objectifs</a>
 	</div>
 </nav>
 
