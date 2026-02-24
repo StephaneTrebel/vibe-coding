@@ -8,7 +8,7 @@
 
 	const WIDTH = 600
 	const HEIGHT = 280
-	const PADDING = { top: 20, right: 20, bottom: 40, left: 60 }
+	const PADDING = { top: 20, right: 20, bottom: 60, left: 90 }
 	const CHART_W = WIDTH - PADDING.left - PADDING.right
 	const CHART_H = HEIGHT - PADDING.top - PADDING.bottom
 
@@ -59,7 +59,7 @@
 			{#each yTicks as tick}
 				{@const y = CHART_H - (tick / yMax) * CHART_H}
 				<line x1="0" y1={y} x2={CHART_W} y2={y} stroke="rgba(255,255,255,0.08)" stroke-width="1" />
-				<text x="-8" y={y + 4} text-anchor="end" font-size="13" fill="#a8b8cc">{formatEuro(tick)}</text>
+				<text x="-8" y={y + 4} text-anchor="end" font-size="26" fill="#a8b8cc">{formatEuro(tick)}</text>
 			{/each}
 
 			<!-- Courbe budget (pointillés) -->
@@ -87,8 +87,8 @@
 					x={p.x}
 					y={CHART_H + 16}
 					text-anchor="middle"
-					font-size="14"
-					fill="#a8b8cc"
+				font-size="28"
+				fill="#a8b8cc"
 				>{p.label}</text>
 			{/each}
 
