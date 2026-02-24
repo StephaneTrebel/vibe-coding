@@ -151,7 +151,7 @@
 		}
 
 		.bottom-nav .icon {
-			font-size: 1.75rem;
+			font-size: 3rem;
 			display: inline-block;
 			transform: scale(1) rotate(0deg);
 			transition: transform 0.2s ease;
