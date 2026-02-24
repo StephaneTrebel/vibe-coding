@@ -132,7 +132,7 @@
 		display: flex;
 		align-items: center;
 		gap: 8px;
-		font-size: 0.8rem;
+		font-size: 1.05rem;
 	}
 
 	.dot {

@@ -60,7 +60,7 @@
 			{#each yTicks as tick}
 				{@const y = CHART_H - (tick / yMax) * CHART_H}
 				<line x1="0" y1={y} x2={CHART_W} y2={y} stroke="rgba(255,255,255,0.08)" stroke-width="1" />
-				<text x="-8" y={y + 4} text-anchor="end" font-size="10" fill="#a8b8cc">{formatEuro(tick)}</text>
+				<text x="-8" y={y + 4} text-anchor="end" font-size="13" fill="#a8b8cc">{formatEuro(tick)}</text>
 			{/each}
 
 			<!-- Courbe budget (pointillés) -->
@@ -89,8 +89,8 @@
 					x={xPos(i)}
 					y={CHART_H + 16}
 					text-anchor="middle"
-					font-size="11"
-					fill="#a8b8cc"
+				font-size="14"
+				fill="#a8b8cc"
 				>{monthLabel(d.month)}</text>
 			{/each}
 
@@ -155,7 +155,7 @@
 		display: flex;
 		justify-content: center;
 		gap: 24px;
-		font-size: 0.8rem;
+		font-size: 1.05rem;
 		color: var(--text-muted);
 	}
 
