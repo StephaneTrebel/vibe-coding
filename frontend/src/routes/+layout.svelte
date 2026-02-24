@@ -141,15 +141,24 @@
 			color: var(--primary);
 		}
 
+		@keyframes jiggle {
+			0%   { transform: scale(1)    rotate(0deg); }
+			20%  { transform: scale(1.7)  rotate(-8deg); }
+			40%  { transform: scale(1.25) rotate(6deg); }
+			60%  { transform: scale(1.5)  rotate(-4deg); }
+			80%  { transform: scale(1.3)  rotate(2deg); }
+			100% { transform: scale(1.35) rotate(0deg); }
+		}
+
 		.bottom-nav .icon {
 			font-size: 1.75rem;
 			display: inline-block;
-			transform: scale(1);
+			transform: scale(1) rotate(0deg);
 			transition: transform 0.2s ease;
 		}
 
 		.bottom-nav a.active .icon {
-			transform: scale(1.35);
+			animation: jiggle 0.3s ease forwards;
 		}
 
 		.bottom-nav .label {
