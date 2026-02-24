@@ -11,6 +11,7 @@
 	--text-muted: #a8b8cc;
 	--border: #475569;
 	--radius: 12px;
+	--bottom-nav-height: 64px;
 }
 
 * {
@@ -155,4 +156,10 @@ label {
 
 .euro::after {
 	content: ' €';
+}
+
+@media (max-width: 767px) {
+	main {
+		padding-bottom: calc(var(--bottom-nav-height) + env(safe-area-inset-bottom));
+	}
 }

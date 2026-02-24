@@ -1,44 +1,46 @@
 <script>
-	import { base } from '$app/paths';
-	import '../app.css';
+	import { base } from '$app/paths'
+	import { page } from '$app/stores'
+	import '../app.css'
 
-	let menuOpen = false;
+	const navItems = [
+		{ href: `${base}/`, label: 'Accueil', icon: '🏠' },
+		{ href: `${base}/transactions`, label: 'Transactions', icon: '💸' },
+		{ href: `${base}/budget`, label: 'Budget', icon: '💰' },
+		{ href: `${base}/goals`, label: 'Objectifs', icon: '🎯' },
+	]
 
-	function toggleMenu() {
-		menuOpen = !menuOpen;
+	function isActive(href) {
+		const path = $page.url.pathname
+		if (href === `${base}/`) return path === `${base}/` || path === `${base}`
+		return path.startsWith(href)
 	}
 </script>
 
 <nav class="navbar">
 	<div class="nav-brand">Mon Budget</div>
-
-	<!-- Bouton hamburger (mobile uniquement) -->
-	<button class="hamburger" class:open={menuOpen} on:click={toggleMenu} aria-label="Menu">
-		<span></span>
-		<span></span>
-		<span></span>
-	</button>
-
-	<!-- Menu (responsive) -->
-	<div class="nav-links" class:open={menuOpen}>
-		<a href="{base}/" on:click={toggleMenu}>Tableau de bord</a>
-		<a href="{base}/transactions" on:click={toggleMenu}>Transactions</a>
-		<a href="{base}/budget" on:click={toggleMenu}>Budget</a>
-		<a href="{base}/goals" on:click={toggleMenu}>Objectifs</a>
+	<div class="nav-links">
+		{#each navItems as item}
+			<a href={item.href} class:active={isActive(item.href)}>{item.label}</a>
+		{/each}
 	</div>
-
-	<!-- Overlay background (mobile uniquement) -->
-	{#if menuOpen}
-		<div class="overlay" on:click={toggleMenu} on:keydown={(e) => e.key === 'Escape' && toggleMenu()} role="button" tabindex="-1"></div>
-	{/if}
 </nav>
 
 <main>
 	<slot />
 </main>
 
+<nav class="bottom-nav" data-testid="bottom-nav">
+	{#each navItems as item}
+		<a href={item.href} class:active={isActive(item.href)} aria-label={item.label}>
+			<span class="icon">{item.icon}</span>
+			<span class="label">{item.label}</span>
+		</a>
+	{/each}
+</nav>
+
 <style>
-	/* === BASE STYLES (desktop par défaut) === */
+	/* === NAVBAR (desktop) === */
 	.navbar {
 		background: var(--bg-card);
 		padding: 16px 24px;
@@ -46,14 +48,12 @@
 		justify-content: space-between;
 		align-items: center;
 		border-bottom: 1px solid var(--border);
-		position: relative;
 	}
 
 	.nav-brand {
 		font-size: 1.25rem;
 		font-weight: 700;
 		color: var(--primary);
-		z-index: 1000;
 	}
 
 	.nav-links {
@@ -68,48 +68,10 @@
 		transition: color 0.2s;
 	}
 
-	.nav-links a:hover {
+	.nav-links a:hover,
+	.nav-links a.active {
 		color: var(--text);
 		text-decoration: none;
-	}
-
-	/* === HAMBURGER BUTTON (caché sur desktop) === */
-	.hamburger {
-		display: none;
-		flex-direction: column;
-		gap: 6px;
-		background: none;
-		border: none;
-		cursor: pointer;
-		padding: 8px;
-		z-index: 1000;
-	}
-
-	.hamburger span {
-		display: block;
-		width: 25px;
-		height: 3px;
-		background: var(--text);
-		border-radius: 3px;
-		transition: all 0.3s ease-in-out;
-	}
-
-	/* Animation hamburger → X */
-	.hamburger.open span:nth-child(1) {
-		transform: rotate(45deg) translate(8px, 8px);
-	}
-
-	.hamburger.open span:nth-child(2) {
-		opacity: 0;
-	}
-
-	.hamburger.open span:nth-child(3) {
-		transform: rotate(-45deg) translate(8px, -8px);
-	}
-
-	/* === OVERLAY (caché sur desktop) === */
-	.overlay {
-		display: none;
 	}
 
 	/* === MAIN CONTENT === */
@@ -117,56 +79,63 @@
 		min-height: calc(100vh - 65px);
 	}
 
-	/* === RESPONSIVE : MOBILE (< 768px) === */
+	/* === BOTTOM NAV (mobile uniquement) === */
+	.bottom-nav {
+		display: none;
+	}
+
+	/* === MOBILE (< 768px) === */
 	@media (max-width: 767px) {
-		/* Afficher le hamburger */
-		.hamburger {
-			display: flex;
-		}
-
-		/* Menu mobile : overlay full-screen */
 		.nav-links {
+			display: none;
+		}
+
+		.bottom-nav {
+			display: flex;
 			position: fixed;
-			top: 0;
-			left: 0;
-			right: 0;
-			background: var(--bg-card);
-			flex-direction: column;
-			gap: 0;
-			padding: 80px 24px 24px;
-			transform: translateY(-100%);
-			transition: transform 0.3s ease-in-out;
-			z-index: 999;
-			box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-		}
-
-		.nav-links.open {
-			transform: translateY(0);
-		}
-
-		.nav-links a {
-			padding: 16px;
-			width: 100%;
-			text-align: left;
-			border-bottom: 1px solid var(--border);
-			font-size: 1.1rem;
-		}
-
-		.nav-links a:last-child {
-			border-bottom: none;
-		}
-
-		/* Overlay semi-transparent */
-		.overlay {
-			display: block;
-			position: fixed;
-			top: 0;
-			left: 0;
-			right: 0;
 			bottom: 0;
-			background: rgba(0, 0, 0, 0.5);
-			z-index: 998;
-			cursor: pointer;
+			left: 0;
+			right: 0;
+			height: var(--bottom-nav-height);
+			padding-bottom: env(safe-area-inset-bottom);
+			background: var(--bg-card);
+			border-top: 1px solid var(--border);
+			z-index: 100;
+		}
+
+		.bottom-nav a {
+			flex: 1;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+			gap: 2px;
+			color: var(--text-muted);
+			text-decoration: none;
+			transition: color 0.2s, transform 0.2s;
+		}
+
+		.bottom-nav a:hover {
+			text-decoration: none;
+		}
+
+		.bottom-nav a.active {
+			color: var(--primary);
+		}
+
+		.bottom-nav a.active .icon {
+			display: inline-block;
+			transform: scale(1.2);
+		}
+
+		.bottom-nav .icon {
+			font-size: 1.5rem;
+			transition: transform 0.2s;
+		}
+
+		.bottom-nav .label {
+			font-size: 0.65rem;
+			font-weight: 500;
 		}
 	}
 </style>
