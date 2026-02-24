@@ -105,6 +105,7 @@
 
 		.bottom-nav a {
 			flex: 1;
+			position: relative;
 			display: flex;
 			flex-direction: column;
 			align-items: center;
@@ -112,25 +113,43 @@
 			gap: 2px;
 			color: var(--text-muted);
 			text-decoration: none;
-			transition: color 0.2s, transform 0.2s;
+			transition: color 0.2s;
 		}
 
 		.bottom-nav a:hover {
 			text-decoration: none;
 		}
 
+		.bottom-nav a::before {
+			content: '';
+			position: absolute;
+			width: 52px;
+			height: 32px;
+			border-radius: 16px;
+			top: 50%;
+			transform: translateY(-65%);
+			background: color-mix(in srgb, var(--primary) 25%, transparent);
+			opacity: 0;
+			transition: opacity 0.2s;
+		}
+
+		.bottom-nav a.active::before {
+			opacity: 1;
+		}
+
 		.bottom-nav a.active {
 			color: var(--primary);
 		}
 
-		.bottom-nav a.active .icon {
+		.bottom-nav .icon {
+			font-size: 1.75rem;
 			display: inline-block;
-			transform: scale(1.2);
+			transform: scale(1);
+			transition: transform 0.2s ease;
 		}
 
-		.bottom-nav .icon {
-			font-size: 1.5rem;
-			transition: transform 0.2s;
+		.bottom-nav a.active .icon {
+			transform: scale(1.35);
 		}
 
 		.bottom-nav .label {
