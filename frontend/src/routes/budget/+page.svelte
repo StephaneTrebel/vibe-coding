@@ -1,72 +1,118 @@
 <script>
-	import { onMount } from 'svelte';
-	import { db } from '$lib/db.js';
+	import { onMount } from 'svelte'
+	import { db } from '$lib/db.js'
+	import PieChart from '$lib/PieChart.svelte'
+	import LineChart from '$lib/LineChart.svelte'
 
-	let budget = null;
-	let spent = 0;
-	let loading = true;
-	let error = null;
-	let budgetAmount = '';
-	let currentMonth = new Date().toISOString().slice(0, 7);
+	let budget = null
+	let spent = 0
+	let loading = true
+	let error = null
+	let budgetAmount = ''
+	let currentMonth = new Date().toISOString().slice(0, 7)
+
+	// Données graphiques
+	let pieData = []
+	let lineData = []
 
 	onMount(async () => {
-		await loadData();
-	});
+		await loadData()
+		lineData = await loadLineData()
+	})
 
 	async function loadData() {
-		loading = true;
+		loading = true
 		try {
 			const [budgetData, transactions] = await Promise.all([
 				db.getBudget(currentMonth),
 				db.getTransactions({ month: currentMonth, type: 'expense' })
-			]);
+			])
 
-			budget = budgetData;
-			budgetAmount = budget?.amount?.toString() || '';
-			spent = transactions.reduce((sum, tx) => sum + tx.amount, 0);
+			budget = budgetData
+			budgetAmount = budget?.amount?.toString() || ''
+			spent = transactions.reduce((sum, tx) => sum + tx.amount, 0)
+			pieData = buildPieData(transactions)
 		} catch (e) {
-			error = e.message;
+			error = e.message
 		} finally {
-			loading = false;
+			loading = false
 		}
+	}
+
+	function buildPieData(transactions) {
+		const map = {}
+		for (const tx of transactions) {
+			map[tx.category] = (map[tx.category] || 0) + tx.amount
+		}
+		return Object.entries(map)
+			.map(([category, amount]) => ({ category, amount }))
+			.sort((a, b) => b.amount - a.amount)
+	}
+
+	async function loadLineData() {
+		const months = getLast12Months()
+		const results = await Promise.all(
+			months.map(async month => {
+				const [b, txs] = await Promise.all([
+					db.getBudget(month),
+					db.getTransactions({ month, type: 'expense' })
+				])
+				return {
+					month,
+					budget: b?.amount || 0,
+					spent: txs.reduce((s, t) => s + t.amount, 0),
+				}
+			})
+		)
+		return results
+	}
+
+	function getLast12Months() {
+		const months = []
+		const now = new Date()
+		for (let i = 11; i >= 0; i--) {
+			const d = new Date(now.getFullYear(), now.getMonth() - i, 1)
+			months.push(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`)
+		}
+		return months
 	}
 
 	async function saveBudget() {
 		try {
-			const amount = parseFloat(budgetAmount);
+			const amount = parseFloat(budgetAmount)
 			if (isNaN(amount) || amount < 0) {
-				error = 'Veuillez entrer un montant valide';
-				return;
+				error = 'Veuillez entrer un montant valide'
+				return
 			}
-			budget = await db.setBudget(currentMonth, amount);
-			error = null;
+			budget = await db.setBudget(currentMonth, amount)
+			error = null
+			// Rafraîchir la courbe avec le nouveau budget
+			lineData = await loadLineData()
 		} catch (e) {
-			error = e.message;
+			error = e.message
 		}
 	}
 
 	async function changeMonth(delta) {
-		const date = new Date(currentMonth + '-01');
-		date.setMonth(date.getMonth() + delta);
-		currentMonth = date.toISOString().slice(0, 7);
-		await loadData();
+		const date = new Date(currentMonth + '-01')
+		date.setMonth(date.getMonth() + delta)
+		currentMonth = date.toISOString().slice(0, 7)
+		await loadData()
 	}
 
 	function formatEuro(amount) {
-		return new Intl.NumberFormat('fr-FR', {
-			style: 'currency',
-			currency: 'EUR'
-		}).format(amount);
+		return new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(amount)
 	}
 
 	function formatMonth(monthStr) {
-		const date = new Date(monthStr + '-01');
-		return date.toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' });
+		const date = new Date(monthStr + '-01')
+		return date.toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' })
 	}
 
-	$: remaining = (budget?.amount || 0) - spent;
-	$: percentage = budget?.amount ? Math.min((spent / budget.amount) * 100, 100) : 0;
-	$: isOverBudget = remaining < 0;
+	$: remaining = (budget?.amount || 0) - spent
+	$: percentage = budget?.amount ? Math.min((spent / budget.amount) * 100, 100) : 0
+	$: isOverBudget = remaining < 0
+	$: hasLineData = lineData.filter(d => d.budget > 0 || d.spent > 0).length >= 2
 </script>
 
 <svelte:head>
@@ -134,7 +180,7 @@
 		</div>
 
 		{#if budget}
-			<div class="card">
+			<div class="card mb-3">
 				<h3 class="mb-2">Progression</h3>
 				<div class="progress-container">
 					<div class="progress-bar">
@@ -159,6 +205,20 @@
 						Attention, vous approchez de la limite !
 					</p>
 				{/if}
+			</div>
+		{/if}
+
+		{#if pieData.length > 0}
+			<div class="card mb-3" data-testid="pie-chart-card">
+				<h3 class="mb-3">Dépenses par catégorie — {formatMonth(currentMonth)}</h3>
+				<PieChart data={pieData} />
+			</div>
+		{/if}
+
+		{#if hasLineData}
+			<div class="card" data-testid="line-chart-card">
+				<h3 class="mb-3">Évolution du budget</h3>
+				<LineChart data={lineData} />
 			</div>
 		{/if}
 	{/if}

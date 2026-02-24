@@ -1,31 +1,55 @@
 <script>
-	import { onMount } from 'svelte';
-	import { base } from '$app/paths';
-	import { db } from '$lib/db.js';
+	import { onMount } from 'svelte'
+	import { base } from '$app/paths'
+	import { db } from '$lib/db.js'
+	import BarChart from '$lib/BarChart.svelte'
 
-	let dashboard = null;
-	let loading = true;
-	let error = null;
+	let dashboard = null
+	let loading = true
+	let error = null
+	let barData = []
 
 	onMount(async () => {
 		try {
-			dashboard = await db.getDashboard();
+			dashboard = await db.getDashboard()
+			barData = await loadBarData()
 		} catch (e) {
-			error = e.message;
+			error = e.message
 		} finally {
-			loading = false;
+			loading = false
 		}
-	});
+	})
+
+	async function loadBarData() {
+		const transactions = await db.getTransactions({})
+		const months = getLast6Months()
+		return months.map(month => {
+			const txs = transactions.filter(t => t.date.startsWith(month))
+			const income   = txs.filter(t => t.type === 'income').reduce((s, t) => s + t.amount, 0)
+			const expenses = txs.filter(t => t.type === 'expense').reduce((s, t) => s + t.amount, 0)
+			return { month, income, expenses }
+		})
+	}
+
+	function getLast6Months() {
+		const months = []
+		const now = new Date()
+		for (let i = 5; i >= 0; i--) {
+			const d = new Date(now.getFullYear(), now.getMonth() - i, 1)
+			const month = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`
+			months.push(month)
+		}
+		return months
+	}
+
+	$: hasBarData = barData.some(d => d.income > 0 || d.expenses > 0)
 
 	function formatEuro(amount) {
-		return new Intl.NumberFormat('fr-FR', {
-			style: 'currency',
-			currency: 'EUR'
-		}).format(amount);
+		return new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(amount)
 	}
 
 	function formatDate(dateStr) {
-		return new Date(dateStr).toLocaleDateString('fr-FR');
+		return new Date(dateStr).toLocaleDateString('fr-FR')
 	}
 </script>
 
@@ -64,7 +88,7 @@
 			</div>
 		</div>
 
-		<div class="grid grid-2">
+		<div class="grid grid-2 mb-3">
 			<div class="card">
 				<h2 class="mb-2">Historique</h2>
 				<div class="all-time-stats">
@@ -104,6 +128,13 @@
 				{/if}
 			</div>
 		</div>
+
+		{#if hasBarData}
+			<div class="card" data-testid="bar-chart-card">
+				<h2 class="mb-3">Revenus vs Dépenses — 6 derniers mois</h2>
+				<BarChart data={barData} />
+			</div>
+		{/if}
 	{/if}
 </div>
 
