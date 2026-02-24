@@ -27,18 +27,15 @@
 
 	$: yTicks = [0, 0.25, 0.5, 0.75, 1].map(f => Math.round(f * yMax))
 
-	function xPos(i) {
-		if (displayed.length <= 1) return CHART_W / 2
-		return (i / (displayed.length - 1)) * CHART_W
-	}
+	$: points = displayed.map((d, i) => ({
+		x: displayed.length <= 1 ? CHART_W / 2 : (i / (displayed.length - 1)) * CHART_W,
+		yBudget: CHART_H - (d.budget / yMax) * CHART_H,
+		ySpent:  CHART_H - (d.spent  / yMax) * CHART_H,
+		label: monthLabel(d.month),
+	}))
 
-	function yPos(value) {
-		return CHART_H - (value / yMax) * CHART_H
-	}
-
-	function polyline(key) {
-		return displayed.map((d, i) => `${xPos(i)},${yPos(d[key])}`).join(' ')
-	}
+	$: pointsBudget = points.map(p => `${p.x},${p.yBudget}`).join(' ')
+	$: pointsSpent  = points.map(p => `${p.x},${p.ySpent}`).join(' ')
 
 	function formatEuro(n) {
 		return new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(n)
@@ -67,7 +64,7 @@
 
 			<!-- Courbe budget (pointillés) -->
 			<polyline
-				points={polyline('budget')}
+				points={pointsBudget}
 				fill="none"
 				stroke={COLOR_BUDGET}
 				stroke-width="2"
@@ -76,24 +73,23 @@
 
 			<!-- Courbe dépenses (pleine) -->
 			<polyline
-				points={polyline('spent')}
+				points={pointsSpent}
 				fill="none"
 				stroke={COLOR_SPENT}
 				stroke-width="2"
 			/>
 
-			<!-- Points -->
-			{#each displayed as d, i}
-				<circle cx={xPos(i)} cy={yPos(d.budget)} r="4" fill={COLOR_BUDGET} />
-				<circle cx={xPos(i)} cy={yPos(d.spent)}  r="4" fill={COLOR_SPENT} />
-				<!-- Label mois -->
+			<!-- Points et labels -->
+			{#each points as p}
+				<circle cx={p.x} cy={p.yBudget} r="4" fill={COLOR_BUDGET} />
+				<circle cx={p.x} cy={p.ySpent}  r="4" fill={COLOR_SPENT} />
 				<text
-					x={xPos(i)}
+					x={p.x}
 					y={CHART_H + 16}
 					text-anchor="middle"
-				font-size="14"
-				fill="#a8b8cc"
-				>{monthLabel(d.month)}</text>
+					font-size="14"
+					fill="#a8b8cc"
+				>{p.label}</text>
 			{/each}
 
 			<!-- Axe X -->
