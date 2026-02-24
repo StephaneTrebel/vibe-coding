@@ -98,6 +98,7 @@
 		date.setMonth(date.getMonth() + delta)
 		currentMonth = date.toISOString().slice(0, 7)
 		await loadData()
+		lineData = await loadLineData()
 	}
 
 	function formatEuro(amount) {
@@ -112,7 +113,7 @@
 	$: remaining = (budget?.amount || 0) - spent
 	$: percentage = budget?.amount ? Math.min((spent / budget.amount) * 100, 100) : 0
 	$: isOverBudget = remaining < 0
-	$: hasLineData = lineData.filter(d => d.budget > 0 || d.spent > 0).length >= 2
+	$: hasLineData = lineData.some(d => d.budget > 0 || d.spent > 0)
 </script>
 
 <svelte:head>

@@ -100,32 +100,19 @@ test.describe('Charts - Budget', () => {
 	});
 
 	test('line-chart-visible-when-budget-set', async ({ page }) => {
-		// Définir un budget pour le mois courant
+		// Un seul mois suffit pour afficher la courbe
 		await page.goto('/budget');
 		await page.fill('#budget', '200');
 		await page.locator('button:has-text("Enregistrer")').click();
-
-		// La courbe nécessite au moins 2 mois de données — ici on définit 2 budgets
-		// (mois courant + mois précédent via navigation)
-		await page.locator('button[aria-label="Mois précédent"]').click();
-		await page.fill('#budget', '150');
-		await page.locator('button:has-text("Enregistrer")').click();
-
-		// Revenir au mois courant et vérifier la courbe
-		await page.locator('button[aria-label="Mois suivant"]').click();
 		await expect(page.locator('[data-testid="line-chart-card"]')).toBeVisible();
 		await expect(page.locator('[data-testid="line-chart"]')).toBeVisible();
 	});
 
 	test('line-chart-period-toggle', async ({ page }) => {
-		// Préparer des données sur 2 mois
+		// Un budget suffit pour afficher la courbe et le toggle
 		await page.goto('/budget');
 		await page.fill('#budget', '200');
 		await page.locator('button:has-text("Enregistrer")').click();
-		await page.locator('button[aria-label="Mois précédent"]').click();
-		await page.fill('#budget', '150');
-		await page.locator('button:has-text("Enregistrer")').click();
-		await page.locator('button[aria-label="Mois suivant"]').click();
 
 		const lineCard = page.locator('[data-testid="line-chart-card"]');
 		await expect(lineCard).toBeVisible();
