@@ -4,6 +4,8 @@
 	export let data = []
 	export let period = 6  // 6 | 12
 
+	let selectedPeriod = period
+
 	const WIDTH = 600
 	const HEIGHT = 280
 	const PADDING = { top: 20, right: 20, bottom: 40, left: 60 }
@@ -18,7 +20,7 @@
 		return new Date(year, month - 1, 1).toLocaleDateString('fr-FR', { month: 'short' })
 	}
 
-	$: displayed = data.slice(-period)
+	$: displayed = data.slice(-selectedPeriod)
 
 	$: maxValue = Math.max(...displayed.flatMap(d => [d.budget, d.spent]), 1)
 	$: yMax = Math.ceil(maxValue / 100) * 100 || 100
@@ -45,8 +47,8 @@
 
 <div class="chart-wrapper" data-testid="line-chart">
 	<div class="toggle">
-		<button class:active={period === 6} on:click={() => period = 6}>6 mois</button>
-		<button class:active={period === 12} on:click={() => period = 12}>12 mois</button>
+		<button class:active={selectedPeriod === 6} on:click={() => selectedPeriod = 6}>6 mois</button>
+		<button class:active={selectedPeriod === 12} on:click={() => selectedPeriod = 12}>12 mois</button>
 	</div>
 
 	<svg
