@@ -1,7 +1,7 @@
 <script>
 	// Props
 	// data: [{ month: 'YYYY-MM', income: number, expenses: number }]
-	export let data = []
+	let { data = [] } = $props()
 
 	const WIDTH = 600
 	const HEIGHT = 300
@@ -17,12 +17,12 @@
 		return new Date(year, month - 1, 1).toLocaleDateString('fr-FR', { month: 'short' })
 	}
 
-	$: maxValue = Math.max(...data.flatMap(d => [d.income, d.expenses]), 1)
-	$: yMax = Math.ceil(maxValue / 100) * 100 || 100
+	let maxValue = $derived(data.length === 0 ? 1 : Math.max(...data.flatMap(d => [d.income || 0, d.expenses || 0]), 1))
+	let yMax = $derived(Math.ceil(maxValue / 100) * 100 || 100)
 
-	$: slotW = data.length > 0 ? CHART_W / data.length : CHART_W
+	let slotW = $derived(data.length > 0 ? CHART_W / data.length : CHART_W)
 	const BAR_GAP = 4
-	$: barW = Math.max((slotW - BAR_GAP * 3) / 2, 4)
+	let barW = $derived(data.length === 0 ? 4 : Math.max((slotW - BAR_GAP * 3) / 2, 4))
 
 	function barX(i, isIncome) {
 		const slotStart = i * slotW
@@ -39,7 +39,7 @@
 	}
 
 	// Y axis ticks (4 steps)
-	$: yTicks = [0, 0.25, 0.5, 0.75, 1].map(f => Math.round(f * yMax))
+	let yTicks = $derived([0, 0.25, 0.5, 0.75, 1].map(f => Math.round(f * yMax)))
 
 	function formatEuro(n) {
 		return new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(n)

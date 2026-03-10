@@ -1,10 +1,10 @@
 <script>
 	// Props
 	// data: [{ month: 'YYYY-MM', budget: number, spent: number }]
-	export let data = []
-	export let period = 6  // 6 | 12
+	// period: 6 | 12
+	let { data = [], period = 6 } = $props()
 
-	let selectedPeriod = period
+	let selectedPeriod = $state(period)
 
 	const WIDTH = 600
 	const HEIGHT = 280
@@ -20,22 +20,22 @@
 		return new Date(year, month - 1, 1).toLocaleDateString('fr-FR', { month: 'short' })
 	}
 
-	$: displayed = data.slice(-selectedPeriod)
+	let displayed = $derived(data.slice(-selectedPeriod))
 
-	$: maxValue = Math.max(...displayed.flatMap(d => [d.budget, d.spent]), 1)
-	$: yMax = Math.ceil(maxValue / 100) * 100 || 100
+	let maxValue = $derived(displayed.length === 0 ? 1 : Math.max(...displayed.flatMap(d => [d.budget || 0, d.spent || 0]), 1))
+	let yMax = $derived(Math.ceil(maxValue / 100) * 100 || 100)
 
-	$: yTicks = [0, 0.25, 0.5, 0.75, 1].map(f => Math.round(f * yMax))
+	let yTicks = $derived([0, 0.25, 0.5, 0.75, 1].map(f => Math.round(f * yMax)))
 
-	$: points = displayed.map((d, i) => ({
-		x: displayed.length <= 1 ? CHART_W / 2 : (i / (displayed.length - 1)) * CHART_W,
+	let points = $derived(displayed.map((d, i) => ({
+		x: displayed.length <= 1 ? CHART_W / 2 : displayed.length === 2 ? i * CHART_W : (i / (displayed.length - 1)) * CHART_W,
 		yBudget: CHART_H - (d.budget / yMax) * CHART_H,
 		ySpent:  CHART_H - (d.spent  / yMax) * CHART_H,
 		label: monthLabel(d.month),
-	}))
+	})))
 
-	$: pointsBudget = points.map(p => `${p.x},${p.yBudget}`).join(' ')
-	$: pointsSpent  = points.map(p => `${p.x},${p.ySpent}`).join(' ')
+	let pointsBudget = $derived(points.map(p => `${p.x},${p.yBudget}`).join(' '))
+	let pointsSpent  = $derived(points.map(p => `${p.x},${p.ySpent}`).join(' '))
 
 	function formatEuro(n) {
 		return new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(n)
@@ -44,8 +44,8 @@
 
 <div class="chart-wrapper" data-testid="line-chart">
 	<div class="toggle">
-		<button class:active={selectedPeriod === 6} on:click={() => selectedPeriod = 6}>6 mois</button>
-		<button class:active={selectedPeriod === 12} on:click={() => selectedPeriod = 12}>12 mois</button>
+		<button class:active={selectedPeriod === 6} onclick={() => selectedPeriod = 6}>6 mois</button>
+		<button class:active={selectedPeriod === 12} onclick={() => selectedPeriod = 12}>12 mois</button>
 	</div>
 
 	<svg

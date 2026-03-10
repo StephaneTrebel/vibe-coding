@@ -1,7 +1,7 @@
 <script>
 	// Props
 	// data: [{ category: string, amount: number }]
-	export let data = []
+	let { data = [] } = $props()
 
 	const SIZE = 220
 	const CX = SIZE / 2
@@ -20,7 +20,7 @@
 		'#4ade80',
 	]
 
-	$: total = data.reduce((s, d) => s + d.amount, 0)
+	let total = $derived(data.reduce((s, d) => s + d.amount, 0))
 
 	function polarToCartesian(cx, cy, r, angleDeg) {
 		const rad = (angleDeg - 90) * (Math.PI / 180)
@@ -45,7 +45,8 @@
 		].join(' ')
 	}
 
-	$: slices = (() => {
+	let slices = $derived.by(() => {
+		if (total === 0) return []
 		let angle = 0
 		return data.map((d, i) => {
 			const sweep = (d.amount / total) * 360
@@ -64,7 +65,7 @@
 			angle += sweep
 			return result
 		})
-	})()
+	})
 
 	function formatEuro(n) {
 		return new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(n)
