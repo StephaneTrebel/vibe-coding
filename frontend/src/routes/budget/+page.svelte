@@ -3,22 +3,88 @@
 	import { db } from '$lib/db.js'
 	import PieChart from '$lib/PieChart.svelte'
 	import LineChart from '$lib/LineChart.svelte'
+	import { createSwipeHandler } from '$lib/swipe.js'
 
-	let budget = null
-	let spent = 0
-	let loading = true
-	let error = null
-	let budgetAmount = ''
-	let currentMonth = new Date().toISOString().slice(0, 7)
+	let budget = $state(null)
+	let spent = $state(0)
+	let loading = $state(true)
+	let error = $state(null)
+	let budgetAmount = $state('')
+	let currentMonth = $state(new Date().toISOString().slice(0, 7))
 
 	// Données graphiques
-	let pieData = []
-	let lineData = []
+	let pieData = $state([])
+	let lineData = $state([])
+
+	// Retour visuel swipe
+	let dragOffset = $state(0)
+	let showHint = $state(false)
+
+	// Référence DOM pour les listeners touch
+	let monthNavEl = $state(null)
+
+	let remaining = $derived((budget?.amount || 0) - spent)
+	let percentage = $derived(budget?.amount ? Math.min((spent / budget.amount) * 100, 100) : 0)
+	let isOverBudget = $derived(remaining < 0)
+	let hasLineData = $derived(lineData.some(d => d.budget > 0 || d.spent > 0))
 
 	onMount(async () => {
 		await loadData()
 		lineData = await loadLineData()
+		const cleanupSwipe = registerSwipe()
+		triggerHint()
+		return cleanupSwipe
 	})
+
+	function registerSwipe() {
+		if (!monthNavEl) return
+
+		const handler = createSwipeHandler({
+			onSwipeLeft() {
+				if (loading) return
+				changeMonth(1)
+				if (navigator.vibrate) navigator.vibrate(10)
+			},
+			onSwipeRight() {
+				if (loading) return
+				changeMonth(-1)
+				if (navigator.vibrate) navigator.vibrate(10)
+			}
+		})
+
+		const onMove = (e) => {
+			const dx = handler.handleTouchMove(e)
+			dragOffset = dx ?? 0
+		}
+		const onEnd = (e) => {
+			dragOffset = 0
+			handler.handleTouchEnd(e)
+		}
+		const onCancel = () => {
+			dragOffset = 0
+			handler.handleTouchCancel()
+		}
+
+		monthNavEl.addEventListener('touchstart', handler.handleTouchStart, { passive: true })
+		monthNavEl.addEventListener('touchmove', onMove, { passive: true })
+		monthNavEl.addEventListener('touchend', onEnd, { passive: true })
+		monthNavEl.addEventListener('touchcancel', onCancel, { passive: true })
+
+		return () => {
+			monthNavEl.removeEventListener('touchstart', handler.handleTouchStart)
+			monthNavEl.removeEventListener('touchmove', onMove)
+			monthNavEl.removeEventListener('touchend', onEnd)
+			monthNavEl.removeEventListener('touchcancel', onCancel)
+		}
+	}
+
+	function triggerHint() {
+		if (typeof localStorage === 'undefined') return
+		if (localStorage.getItem('budget-swipe-hint-shown')) return
+		localStorage.setItem('budget-swipe-hint-shown', '1')
+		showHint = true
+		setTimeout(() => { showHint = false }, 800)
+	}
 
 	async function loadData() {
 		loading = true
@@ -86,7 +152,6 @@
 			}
 			budget = await db.setBudget(currentMonth, amount)
 			error = null
-			// Rafraîchir la courbe avec le nouveau budget
 			lineData = await loadLineData()
 		} catch (e) {
 			error = e.message
@@ -94,11 +159,15 @@
 	}
 
 	async function changeMonth(delta) {
-		const date = new Date(currentMonth + '-01')
-		date.setMonth(date.getMonth() + delta)
-		currentMonth = date.toISOString().slice(0, 7)
-		await loadData()
-		lineData = await loadLineData()
+		try {
+			const [year, month] = currentMonth.split('-').map(Number)
+			const date = new Date(year, month - 1 + delta, 1)
+			currentMonth = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`
+			await loadData()
+			lineData = await loadLineData()
+		} catch (e) {
+			error = e.message
+		}
 	}
 
 	function formatEuro(amount) {
@@ -109,11 +178,6 @@
 		const date = new Date(monthStr + '-01')
 		return date.toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' })
 	}
-
-	$: remaining = (budget?.amount || 0) - spent
-	$: percentage = budget?.amount ? Math.min((spent / budget.amount) * 100, 100) : 0
-	$: isOverBudget = remaining < 0
-	$: hasLineData = lineData.some(d => d.budget > 0 || d.spent > 0)
 </script>
 
 <svelte:head>
@@ -123,7 +187,14 @@
 <div class="container">
 	<h1 class="mb-3">Budget mensuel</h1>
 
-	<div class="month-nav card mb-3">
+	<div
+		class="month-nav card mb-3"
+		class:swipe-hint={showHint}
+		bind:this={monthNavEl}
+		style="transform: translateX({dragOffset}px) rotate({dragOffset * 0.05}deg);
+		       opacity: {Math.abs(dragOffset) > 10 ? 0.85 : 1};
+		       transition: {dragOffset === 0 ? 'transform 0.2s ease, opacity 0.2s ease' : 'none'}"
+	>
 		<button class="secondary" onclick={() => changeMonth(-1)} aria-label="Mois précédent">
 			<span class="btn-text">Precedent</span>
 			<span class="btn-icon" aria-hidden="true">←</span>
@@ -230,6 +301,8 @@
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
+		will-change: transform;
+		touch-action: pan-y;
 	}
 
 	.month-nav h2 {
@@ -264,6 +337,17 @@
 			font-size: 1.1rem;
 			text-align: center;
 		}
+	}
+
+	/* Affordance hint : glisse légèrement à droite puis revient */
+	@keyframes swipe-hint {
+		0%   { transform: translateX(0) }
+		40%  { transform: translateX(12px) rotate(0.6deg) }
+		100% { transform: translateX(0) rotate(0) }
+	}
+
+	.month-nav.swipe-hint {
+		animation: swipe-hint 0.8s ease-in-out;
 	}
 
 	.summary-stats {
