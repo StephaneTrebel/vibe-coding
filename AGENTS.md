@@ -7,8 +7,6 @@
 - **Deployment**: GitHub Pages (branch `trunk`) with `BASE_PATH` support
 - **Locale**: French (fr-FR)
 
-> The backend (Rust/Axum) exists in `/backend` but is **not used by the frontend**. It is a standalone API, standalone from the PWA. Ignore it unless explicitly working on the backend.
-
 ## Build & Run Commands
 
 ### Frontend (from `/frontend`)
@@ -236,4 +234,3 @@ frontend/e2e/           # Playwright tests (8 spec files)
 | Issue | Location | Severity |
 |-------|----------|----------|
 | `LineChart.svelte` uses Svelte 4 `on:click` syntax instead of Svelte 5 `onclick` | `src/lib/LineChart.svelte` | Low — deprecation warning |
-| `data/budget.db` (SQLite dev DB) appears committed to the repo | `data/budget.db` | Low — should be in `.gitignore` |

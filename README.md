@@ -117,20 +117,6 @@ Les données sont stockées localement dans IndexedDB :
 
 ⚠️ **Important** : Les données sont stockées dans le navigateur. Si le cache est vidé, les données seront perdues. Une fonctionnalité d'export/import est recommandée pour sauvegarder les données.
 
-## Backend (optionnel)
-
-Un backend Rust/Axum est disponible dans `/backend` pour référence. Il n'est pas utilisé dans la version PWA actuelle mais pourrait servir pour :
-- Synchronisation multi-appareils
-- Backup cloud
-- Authentification multi-utilisateurs
-
-Pour le lancer :
-
-```bash
-cd backend
-cargo run
-```
-
 ## Structure du projet
 
 ```
@@ -138,14 +124,17 @@ cargo run
 │   ├── src/
 │   │   ├── routes/          # Pages SvelteKit
 │   │   ├── lib/
-│   │   │   └── db.js        # Couche d'accès IndexedDB
+│   │   │   ├── db.js        # Couche d'accès IndexedDB
+│   │   │   ├── BarChart.svelte
+│   │   │   ├── PieChart.svelte
+│   │   │   └── LineChart.svelte
 │   │   ├── service-worker.js
 │   │   └── app.css
 │   ├── static/
-│   │   ├── manifest.json    # Manifeste PWA
+│   │   ├── manifest.json    # Manifeste PWA (généré)
 │   │   └── icons/
+│   ├── scripts/             # Scripts prebuild/postbuild
 │   └── e2e/                 # Tests Playwright
-├── backend/                 # Backend Rust (non utilisé)
 └── transformations/         # Plans de transformation
 ```
 
