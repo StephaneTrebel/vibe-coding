@@ -2,53 +2,94 @@
 
 ## Project Overview
 
-"Mon Budget" is a personal budgeting PWA for teenagers. Full-stack application with:
+"Mon Budget" is a personal budgeting PWA for teenagers. Frontend-only application (local-first):
 - **Frontend**: SvelteKit 5 (JavaScript, not TypeScript) with static adapter, IndexedDB storage
-- **Backend**: Rust with Axum 0.8, SQLite via sqlx (optional - frontend is local-first)
+- **Deployment**: GitHub Pages (branch `trunk`) with `BASE_PATH` support
 - **Locale**: French (fr-FR)
+
+> The backend (Rust/Axum) exists in `/backend` but is **not used by the frontend**. It is a standalone API, standalone from the PWA. Ignore it unless explicitly working on the backend.
 
 ## Build & Run Commands
 
 ### Frontend (from `/frontend`)
 ```bash
 npm run dev          # Start dev server (http://localhost:5173)
-npm run build        # Production build
+npm run build        # Production build (runs prebuild/postbuild scripts)
 npm run preview      # Preview production build
 ```
 
-### Backend (from `/backend`)
+### Environment Variables
 ```bash
-cargo run            # Start server (http://0.0.0.0:3000)
-cargo build --release # Release build
+BASE_PATH=           # Empty for dev; set to /repo-name for GitHub Pages (e.g. /vibe-coding)
 ```
+
+### Build Scripts (auto-run)
+- `scripts/generate-manifest.js` — injects `BASE_PATH` into `static/manifest.json` from template
+- `scripts/copy-404.js` — copies `index.html` → `404.html` for GitHub Pages SPA routing
 
 ## Testing
 
-### Framework: Playwright (E2E only)
+### Framework: Playwright (E2E only) + axe-core (accessibility)
 
 Test files are in `/frontend/e2e/`.
 
 ```bash
-npm run test:e2e                           # Run all tests
+npm run test:e2e                              # Run all tests
 npx playwright test e2e/transactions.spec.ts  # Single file
-npx playwright test -g "create-expense"    # By name pattern
-npm run test:e2e:headed                    # With visible browser
-npm run test:e2e:ui                        # Interactive UI mode
+npx playwright test -g "create-expense"       # By name pattern
+npm run test:e2e:headed                       # With visible browser
+npm run test:e2e:ui                           # Interactive UI mode
 ```
+
+### Test Files
+
+| File | Coverage |
+|------|----------|
+| `transactions.spec.ts` | CRUD transactions, type/category switching, edit prefill, delete |
+| `dashboard.spec.ts` | Stats, recent transactions (limit 5), balance styling, monthly isolation |
+| `budget.spec.ts` | Set/update budget, progress bar states, month navigation, category exclusion |
+| `goals.spec.ts` | CRUD goals, +1/+10/-1/-10 increments, floor at 0, achieve badge, validation |
+| `navigation.spec.ts` | Desktop navbar, mobile bottom nav (375×667), active link, responsive behavior |
+| `accessibility.spec.ts` | axe-core scans on all pages (empty + with-data states), zero violations expected |
+| `charts.spec.ts` | BarChart/PieChart/LineChart visibility (hidden when no data), period toggle |
+| `integration.spec.ts` | Cross-page: transaction affects budget/dashboard, edit/delete propagation |
 
 ### Writing Tests
 - Tests use French UI labels (e.g., "Ajouter", "Supprimer", "Aucune transaction")
 - Use `data-testid` attributes when adding new testable elements
+- Chart wrappers use `data-testid="bar-chart"`, `"pie-chart"`, `"line-chart"`
 - Follow existing patterns in `e2e/*.spec.ts`
 
-## Code Review Principles
+## Application Features
 
-From `.claude/instructions.md`:
-- **Challenge** architecture and implementation choices actively
-- **Flag** any compromise on strong typing or functional purity
-- **Never validate** code without appropriate tests
-- Provide **concrete alternatives** when identifying problems
-- Be **token-efficient** - alert before expensive operations
+### Pages & Routes
+
+| Route | Description |
+|-------|-------------|
+| `/` | Dashboard — solde, stats mensuelles, transactions récentes (5), BarChart |
+| `/transactions` | CRUD transactions, switch type income/expense, categories par type |
+| `/budget` | Budget mensuel, navigation ← →, PieChart dépenses, LineChart historique |
+| `/goals` | Objectifs d'épargne, +1/+10/-1/-10, badge "Atteint", suppression |
+
+### Transaction Categories
+
+**Dépenses** : Alimentation, Transport, Loisirs, Shopping, Abonnements, Education, Autre
+
+**Revenus** : Argent de poche, Job etudiant, Cadeaux, Autre
+
+### Chart Components (SVG — no external library)
+
+| Component | Usage | Props |
+|-----------|-------|-------|
+| `BarChart.svelte` | Dashboard — revenus vs dépenses (6 derniers mois) | `data: [{ month: 'YYYY-MM', income, expenses }]` |
+| `PieChart.svelte` | Budget — dépenses par catégorie (mois courant) | `data: [{ category, amount }]` |
+| `LineChart.svelte` | Budget — budget vs réel (toggle 6/12 mois) | `data: [{ month, budget, spent }]`, `period: 6 \| 12` |
+
+Charts are hidden when there is no data to display.
+
+### Navigation (dual system)
+- **Desktop** (≥ 768px): top navbar (`.navbar`) with text links
+- **Mobile** (< 768px): fixed bottom bar (`.bottom-nav`, `data-testid="bottom-nav"`) with emoji icons + labels + `jiggle` animation on active item
 
 ## Code Style Guidelines
 
@@ -75,6 +116,15 @@ import { db } from '$lib/db.js';     // Then lib imports with $lib alias
 - Single quotes, no semicolons
 - camelCase for variables/functions, kebab-case for CSS classes
 
+**Event syntax — use Svelte 5**
+```svelte
+<!-- Correct (Svelte 5) -->
+<button onclick={handler}>...</button>
+
+<!-- Avoid (Svelte 4, deprecated) -->
+<button on:click={handler}>...</button>
+```
+
 **Error Handling**
 ```javascript
 try {
@@ -92,73 +142,98 @@ new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(am
 new Date(dateStr).toLocaleDateString('fr-FR')
 ```
 
-### Backend (Rust)
-
-**Imports**
-```rust
-use crate::{error::AppError, models::*, AppState};  // Crate first
-use axum::{extract::State, Json};                    // Then external
-```
-
-**Error Handling**
-```rust
-pub enum AppError { BadRequest(String), Unauthorized(String), NotFound(String), Internal(String) }
-// Convert via From trait: impl From<sqlx::Error> for AppError { ... }
-```
-
-**Models**
-```rust
-#[derive(Debug, Serialize, Deserialize, sqlx::FromRow)]
-pub struct Transaction {
-    pub description: Option<String>,
-    #[serde(rename = "type")]
-    #[sqlx(rename = "type")]
-    pub transaction_type: String,
-}
-```
-
-**Validation** - validate in handlers, return `AppError::BadRequest`
-```rust
-if req.amount <= 0.0 {
-    return Err(AppError::BadRequest("Amount must be positive".to_string()));
-}
-```
-
 ## CSS Guidelines
 
-**Variables** (in `app.css`): `--primary`, `--secondary`, `--danger`, `--bg`, `--bg-card`, `--text`, `--text-muted`, `--radius`
+**Variables** (in `app.css`):
 
-**Utility Classes**: `.card`, `.text-muted`, `.text-success`, `.text-danger`, `.mb-1`/`.mb-2`/`.mb-3`, `.flex`, `.flex-between`, `.grid`, `.grid-2`
+| Variable | Value | Usage |
+|----------|-------|-------|
+| `--primary` | `#a5b4fc` | Primary color |
+| `--primary-dark` | `#818cf8` | Hover/active states |
+| `--secondary` | `#34d399` | Success/income |
+| `--danger` | `#fb9494` | Errors/delete |
+| `--warning` | `#f59e0b` | Warning states (budget >75%) |
+| `--bg` | `#0f172a` | Page background |
+| `--bg-card` | `#1e293b` | Card background |
+| `--bg-input` | `#334155` | Input background |
+| `--text` | `#f8fafc` | Primary text |
+| `--text-muted` | `#a8b8cc` | Secondary text |
+| `--border` | `#475569` | Borders |
+| `--radius` | `12px` | Border radius |
+| `--bottom-nav-height` | `80px` | Mobile bottom nav height |
 
-## Database
+**Utility Classes**: `.card`, `.text-muted`, `.text-success`, `.text-danger`, `.mb-1`/`.mb-2`/`.mb-3`, `.mt-2`, `.flex`, `.flex-between`, `.grid`, `.grid-2`, `.form-group`, `.container`, `.euro`
 
-**IndexedDB Stores** (frontend)
-- `transactions` - keyPath: id (autoIncrement), indexes: date, type, category
-- `budgets` - keyPath: month
-- `goals` - keyPath: id (autoIncrement)
+**Mobile padding**: `main` gets `padding-bottom: calc(80px + env(safe-area-inset-bottom))` on `< 768px` to account for the bottom nav.
 
-**SQLite Tables** (backend)
-- `users`, `transactions`, `budgets`, `savings_goals`
+## Database (IndexedDB only)
 
-## Environment Variables
+DB name: `mon-budget`, version: `1`
 
-```bash
-JWT_SECRET=your-secret-key
-DATABASE_URL=sqlite:./data/budget.db
-RUST_LOG=info
-```
+**Stores**
+
+| Store | keyPath | Indexes | Fields |
+|-------|---------|---------|--------|
+| `transactions` | `id` (autoIncrement) | `date`, `type`, `category` | `type` ('income'\|'expense'), `amount`, `category`, `description`, `date` (YYYY-MM-DD), `createdAt` |
+| `budgets` | `month` | — | `month` (YYYY-MM), `amount` |
+| `goals` | `id` (autoIncrement) | — | `name`, `target_amount`, `current_amount` (default 0), `achieved` (default false), `createdAt` |
+
+`getDashboard()` in `lib/db.js` computes all stats client-side: balance, monthly income/expenses, total income/expenses, last 5 recent transactions.
+
+## Deployment (GitHub Pages)
+
+- Branch: `trunk`
+- CI: `.github/workflows/deploy.yml`
+- `BASE_PATH` is set to `/${{ github.event.repository.name }}` in CI
+- `svelte.config.js` injects `BASE_PATH` into `paths.base` at build time
+- `static/.nojekyll` disables Jekyll processing
+- `404.html` (copy of `index.html`) handles SPA client-side routing
+
+Always use `$app/paths` `base` when building internal links to ensure compatibility with GitHub Pages subdirectory deployment.
+
+## Code Review Principles
+
+- **Challenge** architecture and implementation choices actively
+- **Flag** any compromise on strong typing or functional purity
+- **Never validate** code without appropriate tests
+- Provide **concrete alternatives** when identifying problems
+- Be **token-efficient** — alert before expensive operations
 
 ## File Structure
 
 ```
 frontend/src/
-  lib/db.js           # IndexedDB wrapper
-  routes/             # SvelteKit routes (+page.svelte, +layout.svelte)
-  app.css             # Global styles
-  service-worker.js   # PWA offline support
+  lib/
+    db.js               # IndexedDB wrapper + getDashboard()
+    BarChart.svelte     # SVG bar chart (income vs expenses)
+    PieChart.svelte     # SVG donut chart (expenses by category)
+    LineChart.svelte    # SVG line chart (budget vs actual)
+  routes/
+    +layout.svelte      # Dual navigation (desktop navbar + mobile bottom nav)
+    +page.svelte        # Dashboard
+    transactions/+page.svelte
+    budget/+page.svelte
+    goals/+page.svelte
+  app.css               # Global styles + CSS variables
+  app.html              # HTML shell (lang="fr", PWA meta)
+  service-worker.js     # Cache-first PWA offline support
 
-backend/src/
-  main.rs             # Entry point, router
-  db.rs, error.rs, models.rs
-  routes/             # auth.rs, transactions.rs, budget.rs, goals.rs, dashboard.rs
+frontend/static/
+  manifest.json         # Generated at build (do not edit directly)
+  manifest.json.template # Source for manifest (edit this)
+  .nojekyll             # GitHub Pages: disable Jekyll
+  icons/                # PWA icons (192, 512, svg)
+
+frontend/scripts/
+  generate-manifest.js  # Prebuild: injects BASE_PATH into manifest
+  copy-404.js           # Postbuild: copies index.html → 404.html
+
+frontend/e2e/           # Playwright tests (8 spec files)
 ```
+
+## Known Issues
+
+| Issue | Location | Severity |
+|-------|----------|----------|
+| `LineChart.svelte` uses Svelte 4 `on:click` syntax instead of Svelte 5 `onclick` | `src/lib/LineChart.svelte` | Low — deprecation warning |
+| `data/budget.db` (SQLite dev DB) appears committed to the repo | `data/budget.db` | Low — should be in `.gitignore` |
