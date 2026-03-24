@@ -45,7 +45,11 @@
 	$effect(() => {
 		if (importFileInput) {
 			importFileInput.addEventListener('change', handleImportFile)
-			return () => importFileInput.removeEventListener('change', handleImportFile)
+			importFileInput.dataset.listenerReady = 'true'
+			return () => {
+				importFileInput.removeEventListener('change', handleImportFile)
+				delete importFileInput.dataset.listenerReady
+			}
 		}
 	})
 

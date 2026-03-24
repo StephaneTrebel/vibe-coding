@@ -44,10 +44,8 @@ async function addTransaction(
 async function triggerImport(page: Page, fixtureName: string) {
 	const fixturePath = path.join(__dirname, 'fixtures', fixtureName)
 	const fileContent = fs.readFileSync(fixturePath, 'utf-8')
-	// Wait for the page to be fully rendered (Svelte $effect must have run)
-	await page.waitForSelector('[data-testid="export-button"]')
-	// Ensure $effect has attached the change listener after Svelte hydration
-	await page.waitForTimeout(500)
+	// Wait for $effect to attach the change listener (signals via data-listener-ready)
+	await page.waitForSelector('[data-testid="import-file-input"][data-listener-ready="true"]')
 	await page.evaluate(
 		({ content, name }) => {
 			const input = document.querySelector(
