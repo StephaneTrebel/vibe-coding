@@ -1,6 +1,9 @@
 const DB_NAME = 'mon-budget';
 const DB_VERSION = 1;
 
+export const EXPENSE_CATEGORIES = ['Alimentation', 'Transport', 'Loisirs', 'Shopping', 'Abonnements', 'Education', 'Autre']
+export const INCOME_CATEGORIES = ['Argent de poche', 'Job etudiant', 'Cadeaux', 'Autre']
+
 let dbInstance = null;
 
 function openDB() {
@@ -249,6 +252,131 @@ export const db = {
 			request.onsuccess = () => resolve({ success: true });
 			request.onerror = () => reject(request.error);
 		});
+	},
+
+	// Budgets (all)
+	async getAllBudgets() {
+		const database = await openDB()
+		return new Promise((resolve, reject) => {
+			const tx = database.transaction('budgets', 'readonly')
+			const store = tx.objectStore('budgets')
+			const request = store.getAll()
+			request.onsuccess = () => resolve(request.result)
+			request.onerror = () => reject(request.error)
+		})
+	},
+
+	// Metadata counts
+	async getMetadata() {
+		const database = await openDB()
+		return new Promise((resolve, reject) => {
+			const tx = database.transaction(['transactions', 'budgets', 'goals'], 'readonly')
+			const results = {}
+			let pending = 3
+
+			function done() {
+				pending--
+				if (pending === 0) resolve(results)
+			}
+
+			const txCount = tx.objectStore('transactions').count()
+			txCount.onsuccess = () => { results.totalTransactions = txCount.result; done() }
+			txCount.onerror = () => reject(txCount.error)
+
+			const budgetCount = tx.objectStore('budgets').count()
+			budgetCount.onsuccess = () => { results.totalBudgets = budgetCount.result; done() }
+			budgetCount.onerror = () => reject(budgetCount.error)
+
+			const goalCount = tx.objectStore('goals').count()
+			goalCount.onsuccess = () => { results.totalGoals = goalCount.result; done() }
+			goalCount.onerror = () => reject(goalCount.error)
+		})
+	},
+
+	// Replace all data atomically
+	async replaceAllData(importData) {
+		const database = await openDB()
+		return new Promise((resolve, reject) => {
+			const tx = database.transaction(['transactions', 'budgets', 'goals'], 'readwrite')
+
+			tx.oncomplete = () => resolve({ success: true })
+			tx.onerror = () => reject(tx.error ?? new Error('Erreur lors du remplacement des données'))
+			tx.onabort = () => reject(tx.error ?? new Error('Transaction annulée'))
+
+			const txStore = tx.objectStore('transactions')
+			const budgetStore = tx.objectStore('budgets')
+			const goalStore = tx.objectStore('goals')
+
+			txStore.clear()
+			budgetStore.clear()
+			goalStore.clear()
+
+			for (const t of importData.data.transactions) {
+				// eslint-disable-next-line no-unused-vars
+				const { id, createdAt, description, ...rest } = t
+				txStore.add({
+					...rest,
+					description: description ?? null,
+					createdAt: createdAt ?? new Date().toISOString()
+				})
+			}
+
+			for (const b of importData.data.budgets) {
+				budgetStore.put(b)
+			}
+
+			for (const g of importData.data.goals) {
+				// eslint-disable-next-line no-unused-vars
+				const { id, createdAt, current_amount, achieved, ...rest } = g
+				goalStore.add({
+					...rest,
+					current_amount: current_amount ?? 0,
+					achieved: achieved ?? false,
+					createdAt: createdAt ?? new Date().toISOString()
+				})
+			}
+		})
+	},
+
+	// Merge data atomically (add transactions/goals without id, put budgets)
+	async mergeData(importData) {
+		const database = await openDB()
+		return new Promise((resolve, reject) => {
+			const tx = database.transaction(['transactions', 'budgets', 'goals'], 'readwrite')
+
+			tx.oncomplete = () => resolve({ success: true })
+			tx.onerror = () => reject(tx.error ?? new Error('Erreur lors de la fusion des données'))
+			tx.onabort = () => reject(tx.error ?? new Error('Transaction annulée'))
+
+			const txStore = tx.objectStore('transactions')
+			const budgetStore = tx.objectStore('budgets')
+			const goalStore = tx.objectStore('goals')
+
+			for (const t of importData.data.transactions) {
+				// eslint-disable-next-line no-unused-vars
+				const { id, createdAt, description, ...rest } = t
+				txStore.add({
+					...rest,
+					description: description ?? null,
+					createdAt: createdAt ?? new Date().toISOString()
+				})
+			}
+
+			for (const b of importData.data.budgets) {
+				budgetStore.put(b)
+			}
+
+			for (const g of importData.data.goals) {
+				// eslint-disable-next-line no-unused-vars
+				const { id, createdAt, current_amount, achieved, ...rest } = g
+				goalStore.add({
+					...rest,
+					current_amount: current_amount ?? 0,
+					achieved: achieved ?? false,
+					createdAt: createdAt ?? new Date().toISOString()
+				})
+			}
+		})
 	},
 
 	// Dashboard

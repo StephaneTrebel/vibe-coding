@@ -1,0 +1,24 @@
+{
+  "version": 1,
+  "appName": "Mon Budget",
+  "exportDate": "2026-03-17T10:00:00.000Z",
+  "metadata": {
+    "totalTransactions": 1,
+    "totalBudgets": 0,
+    "totalGoals": 0
+  },
+  "data": {
+    "transactions": [
+      {
+        "id": 1,
+        "type": "expense",
+        "amount": -50,
+        "category": "Alimentation",
+        "date": "2026-03-10",
+        "createdAt": "2026-03-10T08:00:00.000Z"
+      }
+    ],
+    "budgets": [],
+    "goals": []
+  }
+}

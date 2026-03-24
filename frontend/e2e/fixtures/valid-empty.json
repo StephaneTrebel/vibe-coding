@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "appName": "Mon Budget",
+  "exportDate": "2026-03-17T10:00:00.000Z",
+  "metadata": {
+    "totalTransactions": 0,
+    "totalBudgets": 0,
+    "totalGoals": 0
+  },
+  "data": {
+    "transactions": [],
+    "budgets": [],
+    "goals": []
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "version": 1,
+  "appName": "Mon Budget",
+  "exportDate": "2026-03-17T10:00:00.000Z",
+  "metadata": {
+    "totalTransactions": 5,
+    "totalBudgets": 0,
+    "totalGoals": 0
+  },
+  "data": {
+    "transactions": [
+      {
+        "id": 1,
+        "type": "expense",
+        "amount": 10,
+        "category": "Alimentation",
+        "date": "2026-03-10",
+        "createdAt": "2026-03-10T08:00:00.000Z"
+      },
+      {
+        "id": 2,
+        "type": "income",
+        "amount": 50,
+        "category": "Argent de poche",
+        "date": "2026-03-01",
+        "createdAt": "2026-03-01T09:00:00.000Z"
+      }
+    ],
+    "budgets": [],
+    "goals": []
+  }
+}

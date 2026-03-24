@@ -1,6 +1,6 @@
 <script>
 	import { onMount } from 'svelte';
-	import { db } from '$lib/db.js';
+	import { db, EXPENSE_CATEGORIES as expenseCategories, INCOME_CATEGORIES as incomeCategories } from '$lib/db.js';
 
 	let transactions = [];
 	let loading = true;
@@ -15,9 +15,6 @@
 		description: '',
 		date: new Date().toISOString().split('T')[0]
 	};
-
-	const expenseCategories = ['Alimentation', 'Transport', 'Loisirs', 'Shopping', 'Abonnements', 'Education', 'Autre'];
-	const incomeCategories = ['Argent de poche', 'Job etudiant', 'Cadeaux', 'Autre'];
 
 	$: categories = form.type === 'expense' ? expenseCategories : incomeCategories;
 

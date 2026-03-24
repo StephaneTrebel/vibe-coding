@@ -1,0 +1,201 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mon-budget.app/export-schema-v1.json",
+  "title": "Mon Budget Export",
+  "description": "Format d'export/import JSON de l'application Mon Budget (PWA budgeting pour ados).",
+  "type": "object",
+  "required": ["version", "appName", "exportDate", "metadata", "data"],
+  "additionalProperties": false,
+  "properties": {
+    "version": {
+      "type": "integer",
+      "const": 1,
+      "description": "Version du format d'export. Entier, cohérent avec DB_VERSION."
+    },
+    "appName": {
+      "type": "string",
+      "const": "Mon Budget",
+      "description": "Marqueur d'application — rejeté si différent."
+    },
+    "exportDate": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Date d'export au format ISO 8601 (ex: 2026-03-17T14:30:00.000Z)."
+    },
+    "metadata": {
+      "type": "object",
+      "required": ["totalTransactions", "totalBudgets", "totalGoals"],
+      "additionalProperties": false,
+      "properties": {
+        "totalTransactions": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Nombre de transactions dans l'export."
+        },
+        "totalBudgets": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Nombre de budgets mensuels dans l'export."
+        },
+        "totalGoals": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Nombre d'objectifs dans l'export."
+        }
+      }
+    },
+    "data": {
+      "type": "object",
+      "required": ["transactions", "budgets", "goals"],
+      "additionalProperties": false,
+      "properties": {
+        "transactions": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/transaction" },
+          "description": "Liste complète des transactions."
+        },
+        "budgets": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/budget" },
+          "description": "Liste complète des budgets mensuels."
+        },
+        "goals": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/goal" },
+          "description": "Liste complète des objectifs d'épargne."
+        }
+      }
+    }
+  },
+  "$defs": {
+    "expenseCategory": {
+      "type": "string",
+      "enum": ["Alimentation", "Transport", "Loisirs", "Shopping", "Abonnements", "Education", "Autre"],
+      "description": "Catégories de dépenses autorisées."
+    },
+    "incomeCategory": {
+      "type": "string",
+      "enum": ["Argent de poche", "Job etudiant", "Cadeaux", "Autre"],
+      "description": "Catégories de revenus autorisées."
+    },
+    "transaction": {
+      "type": "object",
+      "required": ["type", "amount", "category", "date"],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "ID IndexedDB auto-généré. Présent à l'export, ignoré à l'import."
+        },
+        "type": {
+          "type": "string",
+          "enum": ["income", "expense"],
+          "description": "Type de transaction."
+        },
+        "amount": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "description": "Montant en euros (toujours positif)."
+        },
+        "category": {
+          "type": "string",
+          "description": "Catégorie. Doit correspondre au type (expense → expenseCategory, income → incomeCategory)."
+        },
+        "description": {
+          "type": ["string", "null"],
+          "description": "Description libre de la transaction."
+        },
+        "date": {
+          "type": "string",
+          "pattern": "^\\d{4}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12]\\d|3[01])$",
+          "description": "Date au format YYYY-MM-DD."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Date de création au format ISO 8601."
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": { "type": { "const": "expense" } },
+            "required": ["type"]
+          },
+          "then": {
+            "properties": {
+              "category": { "$ref": "#/$defs/expenseCategory" }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": { "type": { "const": "income" } },
+            "required": ["type"]
+          },
+          "then": {
+            "properties": {
+              "category": { "$ref": "#/$defs/incomeCategory" }
+            }
+          }
+        }
+      ]
+    },
+    "budget": {
+      "type": "object",
+      "required": ["month", "amount"],
+      "additionalProperties": false,
+      "properties": {
+        "month": {
+          "type": "string",
+          "pattern": "^\\d{4}-(?:0[1-9]|1[0-2])$",
+          "description": "Mois au format YYYY-MM. Sert de clé primaire (keyPath IndexedDB)."
+        },
+        "amount": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Budget mensuel en euros."
+        }
+      }
+    },
+    "goal": {
+      "type": "object",
+      "required": ["name", "target_amount"],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "ID IndexedDB auto-généré. Présent à l'export, ignoré à l'import."
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Nom de l'objectif d'épargne."
+        },
+        "target_amount": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "description": "Montant cible en euros."
+        },
+        "current_amount": {
+          "type": "number",
+          "minimum": 0,
+          "default": 0,
+          "description": "Montant actuellement épargné."
+        },
+        "achieved": {
+          "type": "boolean",
+          "default": false,
+          "description": "Objectif atteint ou non."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Date de création au format ISO 8601."
+        }
+      }
+    }
+  }
+}
