@@ -407,7 +407,7 @@
 
 	.error {
 		color: var(--danger);
-		background: rgba(239, 68, 68, 0.1);
+		background: var(--danger-bg);
 		padding: 12px;
 		border-radius: var(--radius);
 	}

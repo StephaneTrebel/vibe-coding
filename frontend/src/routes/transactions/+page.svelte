@@ -249,12 +249,12 @@
 	}
 
 	.tx-type.income {
-		background: rgba(16, 185, 129, 0.2);
+		background: var(--success-bg);
 		color: var(--secondary);
 	}
 
 	.tx-type.expense {
-		background: rgba(239, 68, 68, 0.2);
+		background: var(--danger-bg-strong);
 		color: var(--danger);
 	}
 
@@ -292,7 +292,7 @@
 
 	.error {
 		color: var(--danger);
-		background: rgba(239, 68, 68, 0.1);
+		background: var(--danger-bg);
 		padding: 12px;
 		border-radius: var(--radius);
 	}

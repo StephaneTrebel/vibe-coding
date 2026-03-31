@@ -16,6 +16,10 @@
 	--chart-income: var(--secondary);
 	--chart-expense: var(--danger);
 	--chart-budget: var(--primary);
+	--overlay-dark: rgba(0, 0, 0, 0.7);
+	--danger-bg: rgba(239, 68, 68, 0.1);
+	--danger-bg-strong: rgba(239, 68, 68, 0.2);
+	--success-bg: rgba(16, 185, 129, 0.2);
 	--radius: 12px;
 	--bottom-nav-height: 80px;
 }

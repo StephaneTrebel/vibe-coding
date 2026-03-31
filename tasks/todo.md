@@ -51,9 +51,9 @@
 
 #### 2B. Normaliser les overlays et fonds RGBA
 
-- [ ] Ajouter des variables CSS dédiées pour overlays/états
-- [ ] Remplacer les valeurs RGBA hardcodées dans dashboard, budget, goals et transactions
-- [ ] Valider : tests accessibilité
+- [x] Ajouter des variables CSS dédiées pour overlays/états
+- [x] Remplacer les valeurs RGBA hardcodées dans dashboard, budget, goals et transactions
+- [x] Valider : tests accessibilité
 
 ---
 
