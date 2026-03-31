@@ -45,9 +45,9 @@
 
 #### 2A. Extraire les couleurs hardcodées des charts SVG
 
-- [ ] Ajouter les variables CSS manquantes dans `src/app.css`
-- [ ] Remplacer les couleurs hardcodées dans `BarChart.svelte`, `LineChart.svelte`, `PieChart.svelte`
-- [ ] Valider : build + tests charts
+- [x] Ajouter les variables CSS manquantes dans `src/app.css`
+- [x] Remplacer les couleurs hardcodées dans `BarChart.svelte`, `LineChart.svelte`, `PieChart.svelte`
+- [x] Valider : build + tests charts
 
 #### 2B. Normaliser les overlays et fonds RGBA
 

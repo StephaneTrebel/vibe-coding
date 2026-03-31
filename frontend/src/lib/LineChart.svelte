@@ -16,8 +16,8 @@
 	const CHART_W = WIDTH - PADDING.left - PADDING.right
 	const CHART_H = HEIGHT - PADDING.top - PADDING.bottom
 
-	const COLOR_BUDGET = '#a5b4fc'   // --primary
-	const COLOR_SPENT  = '#fb9494'   // --danger
+	const COLOR_BUDGET = 'var(--chart-budget)'
+	const COLOR_SPENT  = 'var(--chart-expense)'
 
 	function monthLabel(yyyyMM) {
 		const [year, month] = yyyyMM.split('-')
@@ -62,8 +62,8 @@
 			<!-- Grille horizontale -->
 			{#each yTicks as tick}
 				{@const y = CHART_H - (tick / yMax) * CHART_H}
-				<line x1="0" y1={y} x2={CHART_W} y2={y} stroke="rgba(255,255,255,0.08)" stroke-width="1" />
-				<text x="-8" y={y + 4} text-anchor="end" font-size="26" fill="#a8b8cc">{formatEuro(tick)}</text>
+				<line x1="0" y1={y} x2={CHART_W} y2={y} stroke="var(--chart-grid)" stroke-width="1" />
+				<text x="-8" y={y + 4} text-anchor="end" font-size="26" fill="var(--chart-axis)">{formatEuro(tick)}</text>
 			{/each}
 
 			<!-- Courbe budget (pointillés) -->
@@ -92,12 +92,12 @@
 					y={CHART_H + 16}
 					text-anchor="middle"
 				font-size="28"
-				fill="#a8b8cc"
+				fill="var(--chart-axis)"
 				>{p.label}</text>
 			{/each}
 
 			<!-- Axe X -->
-			<line x1="0" y1={CHART_H} x2={CHART_W} y2={CHART_H} stroke="#475569" stroke-width="1" />
+			<line x1="0" y1={CHART_H} x2={CHART_W} y2={CHART_H} stroke="var(--border)" stroke-width="1" />
 		</g>
 	</svg>
 
@@ -149,7 +149,7 @@
 
 	.toggle button.active {
 		background: var(--primary);
-		color: #1e293b;
+		color: var(--text-on-light);
 		border-color: var(--primary);
 	}
 

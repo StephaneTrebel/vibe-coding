@@ -9,8 +9,8 @@
 	const CHART_W = WIDTH - PADDING.left - PADDING.right
 	const CHART_H = HEIGHT - PADDING.top - PADDING.bottom
 
-	const COLOR_INCOME = '#34d399'   // --secondary
-	const COLOR_EXPENSE = '#fb9494'  // --danger
+	const COLOR_INCOME = 'var(--chart-income)'
+	const COLOR_EXPENSE = 'var(--chart-expense)'
 
 	function monthLabel(yyyyMM) {
 		const [year, month] = yyyyMM.split('-')
@@ -57,8 +57,8 @@
 			<!-- Grille horizontale -->
 			{#each yTicks as tick}
 				{@const y = CHART_H - (tick / yMax) * CHART_H}
-				<line x1="0" y1={y} x2={CHART_W} y2={y} stroke="rgba(255,255,255,0.08)" stroke-width="1" />
-				<text x="-8" y={y + 4} text-anchor="end" font-size="13" fill="#a8b8cc">{formatEuro(tick)}</text>
+				<line x1="0" y1={y} x2={CHART_W} y2={y} stroke="var(--chart-grid)" stroke-width="1" />
+				<text x="-8" y={y + 4} text-anchor="end" font-size="13" fill="var(--chart-axis)">{formatEuro(tick)}</text>
 			{/each}
 
 			<!-- Barres -->
@@ -87,12 +87,12 @@
 					y={CHART_H + 16}
 					text-anchor="middle"
 				font-size="14"
-				fill="#a8b8cc"
+				fill="var(--chart-axis)"
 				>{monthLabel(d.month)}</text>
 			{/each}
 
 			<!-- Axe X -->
-			<line x1="0" y1={CHART_H} x2={CHART_W} y2={CHART_H} stroke="#475569" stroke-width="1" />
+			<line x1="0" y1={CHART_H} x2={CHART_W} y2={CHART_H} stroke="var(--border)" stroke-width="1" />
 		</g>
 	</svg>
 

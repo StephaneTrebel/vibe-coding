@@ -10,6 +10,12 @@
 	--text: #f8fafc;
 	--text-muted: #a8b8cc;
 	--border: #475569;
+	--text-on-light: #1e293b;
+	--chart-axis: var(--text-muted);
+	--chart-grid: rgba(255, 255, 255, 0.08);
+	--chart-income: var(--secondary);
+	--chart-expense: var(--danger);
+	--chart-budget: var(--primary);
 	--radius: 12px;
 	--bottom-nav-height: 80px;
 }
@@ -48,12 +54,12 @@ button {
 
 button.primary {
 	background: var(--primary);
-	color: #1e293b;
+	color: var(--text-on-light);
 }
 
 button.primary:hover {
 	background: var(--primary-dark);
-	color: #1e293b;
+	color: var(--text-on-light);
 }
 
 button.secondary {
@@ -67,7 +73,7 @@ button.secondary:hover {
 
 button.danger {
 	background: var(--danger);
-	color: #1e293b;
+	color: var(--text-on-light);
 }
 
 button.small {

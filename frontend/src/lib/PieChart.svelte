@@ -89,7 +89,7 @@
 					dominant-baseline="middle"
 					font-size="9"
 					font-weight="600"
-					fill="#0f172a"
+					fill="var(--text-on-light)"
 				>{slice.pct}%</text>
 			{/if}
 		{/each}
