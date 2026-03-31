@@ -9,20 +9,22 @@
 **Contexte** : la feature export/import JSON est maintenant commitée et la suite E2E passe. Il reste à fermer proprement la phase de stabilisation en validant le build de production et le comportement sur GitHub Pages.
 
 **Travail à faire** :
-- [ ] Vérifier le build de prod (`npm run build`)
-- [ ] Pousser `trunk`
-- [ ] Vérifier le déploiement GitHub Pages en conditions réelles
-- [ ] Confirmer que l'export/import fonctionne avec `BASE_PATH`
+- [x] Vérifier le build de prod (`npm run build`)
+- [x] Pousser `trunk`
+- [x] Vérifier le déploiement GitHub Pages en conditions réelles
+- [x] Confirmer que l'export/import fonctionne avec `BASE_PATH`
 
 #### 1B. Migrer `src/routes/transactions/+page.svelte` vers Svelte 5 runes
 
 **Contexte** : `transactions/+page.svelte` reste en syntaxe legacy Svelte 4. C'est la première migration à faire avant de toucher le dashboard, car le périmètre est plus simple et le risque est plus faible.
 
+**Plan** : voir `tasks/plan-migration-transactions-svelte5.md`
+
 **Travail à faire** :
-- [ ] Remplacer les états legacy par des runes Svelte 5 (`$state`, `$derived` si nécessaire)
-- [ ] Éliminer les warnings de réactivité sur la page transactions
-- [ ] Valider : `npm run build`
-- [ ] Valider : tests E2E transactions
+- [x] Remplacer les états legacy par des runes Svelte 5 (`$state`, `$derived` si nécessaire)
+- [x] Éliminer les warnings de réactivité sur la page transactions
+- [x] Valider : `npm run build`
+- [x] Valider : tests E2E transactions
 
 **Règle** : migrer par petits incréments, avec vérification après chaque sous-étape.
 

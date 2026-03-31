@@ -1,34 +1,38 @@
 <script>
-	import { onMount } from 'svelte';
-	import { db, EXPENSE_CATEGORIES as expenseCategories, INCOME_CATEGORIES as incomeCategories } from '$lib/db.js';
+	import { onMount } from 'svelte'
+	import { db, EXPENSE_CATEGORIES as expenseCategories, INCOME_CATEGORIES as incomeCategories } from '$lib/db.js'
 
-	let transactions = [];
-	let loading = true;
-	let error = null;
-	let showForm = false;
-	let editingId = null;
+	function getTodayDate() {
+		return new Date().toISOString().split('T')[0]
+	}
 
-	let form = {
+	let transactions = $state([])
+	let loading = $state(true)
+	let error = $state(null)
+	let showForm = $state(false)
+	let editingId = $state(null)
+
+	let form = $state({
 		type: 'expense',
 		amount: '',
 		category: '',
 		description: '',
-		date: new Date().toISOString().split('T')[0]
-	};
+		date: getTodayDate()
+	})
 
-	$: categories = form.type === 'expense' ? expenseCategories : incomeCategories;
+	let categories = $derived(form.type === 'expense' ? expenseCategories : incomeCategories)
 
 	onMount(async () => {
-		await loadTransactions();
-	});
+		await loadTransactions()
+	})
 
 	async function loadTransactions() {
 		try {
-			transactions = await db.getTransactions();
+			transactions = await db.getTransactions()
 		} catch (e) {
-			error = e.message;
+			error = e.message
 		} finally {
-			loading = false;
+			loading = false
 		}
 	}
 
@@ -38,10 +42,10 @@
 			amount: '',
 			category: '',
 			description: '',
-			date: new Date().toISOString().split('T')[0]
-		};
-		editingId = null;
-		showForm = false;
+			date: getTodayDate()
+		}
+		editingId = null
+		showForm = false
 	}
 
 	async function handleSubmit() {
@@ -52,18 +56,18 @@
 				category: form.category,
 				description: form.description || null,
 				date: form.date
-			};
-
-			if (editingId) {
-				await db.updateTransaction(editingId, data);
-			} else {
-				await db.createTransaction(data);
 			}
 
-			resetForm();
-			await loadTransactions();
+			if (editingId) {
+				await db.updateTransaction(editingId, data)
+			} else {
+				await db.createTransaction(data)
+			}
+
+			resetForm()
+			await loadTransactions()
 		} catch (e) {
-			error = e.message;
+			error = e.message
 		}
 	}
 
@@ -74,18 +78,18 @@
 			category: tx.category,
 			description: tx.description || '',
 			date: tx.date
-		};
-		editingId = tx.id;
-		showForm = true;
+		}
+		editingId = tx.id
+		showForm = true
 	}
 
 	async function deleteTransaction(id) {
 		if (confirm('Voulez-vous vraiment supprimer cette transaction ?')) {
 			try {
-				await db.deleteTransaction(id);
-				await loadTransactions();
+				await db.deleteTransaction(id)
+				await loadTransactions()
 			} catch (e) {
-				error = e.message;
+				error = e.message
 			}
 		}
 	}
@@ -94,15 +98,15 @@
 		return new Intl.NumberFormat('fr-FR', {
 			style: 'currency',
 			currency: 'EUR'
-		}).format(amount);
+		}).format(amount)
 	}
 
 	function formatDate(dateStr) {
-		return new Date(dateStr).toLocaleDateString('fr-FR');
+		return new Date(dateStr).toLocaleDateString('fr-FR')
 	}
 
 	function getTypeLabel(type) {
-		return type === 'income' ? 'revenu' : 'depense';
+		return type === 'income' ? 'revenu' : 'depense'
 	}
 </script>
 
