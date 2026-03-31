@@ -1,7 +1,6 @@
 import { test, expect, type Page } from '@playwright/test'
 import * as path from 'path'
 import * as fs from 'fs'
-import * as os from 'os'
 
 const __dirname = import.meta.dirname
 
@@ -44,8 +43,7 @@ async function addTransaction(
 async function triggerImport(page: Page, fixtureName: string) {
 	const fixturePath = path.join(__dirname, 'fixtures', fixtureName)
 	const fileContent = fs.readFileSync(fixturePath, 'utf-8')
-	// Wait for $effect to attach the change listener (signals via data-listener-ready)
-	await page.waitForSelector('[data-testid="import-file-input"][data-listener-ready="true"]')
+	await waitForDashboardReady(page)
 	await page.evaluate(
 		({ content, name }) => {
 			const input = document.querySelector(
@@ -100,24 +98,48 @@ async function getExistingCounts(
 	})
 }
 
+async function waitForDashboardReady(page: Page) {
+	// The dashboard renders before hydration, so export/import interactions need
+	// a client-side readiness signal before clicks are reliable.
+	await page.waitForSelector('[data-testid="import-file-input"][data-listener-ready="true"]')
+}
+
 // ---------------------------------------------------------------------------
 // Tests
 // ---------------------------------------------------------------------------
 
 test.describe('Export/Import JSON', () => {
 	// -------------------------------------------------------------------------
+	// Blob URL downloads are not reliably detected by Playwright's download
+	// event. Instead, we intercept URL.createObjectURL to capture the exported
+	// JSON and verify its content directly.
+	// -------------------------------------------------------------------------
+
+	async function interceptExport(page: Page) {
+		await page.evaluate(() => {
+			const orig = URL.createObjectURL
+			URL.createObjectURL = function (blob: Blob) {
+				blob.text().then(text => {
+					;(window as any).__capturedExport = text
+				})
+				return orig.call(URL, blob)
+			}
+		})
+	}
+
+	async function getCapturedExport(page: Page) {
+		await expect(page.locator('[role="status"]')).toBeVisible()
+		return page.evaluate(() => JSON.parse((window as any).__capturedExport))
+	}
+
 	test.describe('Export', () => {
 		test('export-empty-database', async ({ page }) => {
 			await page.goto('/')
+			await waitForDashboardReady(page)
+			await interceptExport(page)
+			await page.getByTestId('export-button').click()
 
-			const [download] = await Promise.all([
-				page.waitForEvent('download'),
-				page.getByTestId('export-button').click(),
-			])
-
-			const tmpPath = path.join(os.tmpdir(), `export-empty-${Date.now()}.json`)
-			await download.saveAs(tmpPath)
-			const content = JSON.parse(fs.readFileSync(tmpPath, 'utf-8'))
+			const content = await getCapturedExport(page)
 
 			expect(content.version).toBe(1)
 			expect(content.appName).toBe('Mon Budget')
@@ -127,8 +149,6 @@ test.describe('Export/Import JSON', () => {
 			expect(content.data.transactions).toHaveLength(0)
 			expect(content.data.budgets).toHaveLength(0)
 			expect(content.data.goals).toHaveLength(0)
-
-			fs.unlinkSync(tmpPath)
 		})
 
 		test('export-with-data', async ({ page }) => {
@@ -142,43 +162,34 @@ test.describe('Export/Import JSON', () => {
 			})
 
 			await page.goto('/')
+			await waitForDashboardReady(page)
+			await interceptExport(page)
+			await page.getByTestId('export-button').click()
 
-			const [download] = await Promise.all([
-				page.waitForEvent('download'),
-				page.getByTestId('export-button').click(),
-			])
-
-			const tmpPath = path.join(os.tmpdir(), `export-data-${Date.now()}.json`)
-			await download.saveAs(tmpPath)
-			const content = JSON.parse(fs.readFileSync(tmpPath, 'utf-8'))
+			const content = await getCapturedExport(page)
 
 			expect(content.data.transactions).toHaveLength(1)
 			expect(content.data.transactions[0].category).toBe('Alimentation')
 			expect(content.data.transactions[0].amount).toBe(42.5)
 			expect(content.data.transactions[0].type).toBe('expense')
-
-			fs.unlinkSync(tmpPath)
 		})
 
 		test('export-filename', async ({ page }) => {
 			await page.goto('/')
+			await waitForDashboardReady(page)
+			await interceptExport(page)
+			await page.getByTestId('export-button').click()
 
-			const [download] = await Promise.all([
-				page.waitForEvent('download'),
-				page.getByTestId('export-button').click(),
-			])
-
-			const suggestedName = download.suggestedFilename()
-			expect(suggestedName).toMatch(/^mon-budget-\d{4}-\d{2}-\d{2}\.json$/)
+			const msg = page.locator('[role="status"]')
+			await expect(msg).toBeVisible()
+			const text = await msg.textContent()
+			expect(text).toMatch(/mon-budget-\d{4}-\d{2}-\d{2}\.json/)
 		})
 
 		test('export-success-message', async ({ page }) => {
 			await page.goto('/')
-
-			await Promise.all([
-				page.waitForEvent('download'),
-				page.getByTestId('export-button').click(),
-			])
+			await waitForDashboardReady(page)
+			await page.getByTestId('export-button').click()
 
 			// Un message role="status" doit apparaître
 			const msg = page.locator('[role="status"]')

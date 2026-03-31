@@ -5,10 +5,10 @@ function getMonthName(date: Date): string {
 }
 
 function getMonthOffset(offset: number): { month: string; name: string } {
-	const date = new Date();
-	date.setMonth(date.getMonth() + offset);
+	const now = new Date();
+	const date = new Date(now.getFullYear(), now.getMonth() + offset, 1);
 	return {
-		month: date.toISOString().slice(0, 7),
+		month: `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`,
 		name: getMonthName(date),
 	};
 }

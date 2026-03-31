@@ -10,7 +10,10 @@
 	let loading = $state(true)
 	let error = $state(null)
 	let budgetAmount = $state('')
-	let currentMonth = $state(new Date().toISOString().slice(0, 7))
+	let currentMonth = $state((() => {
+		const d = new Date()
+		return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`
+	})())
 
 	// Données graphiques
 	let pieData = $state([])
@@ -175,7 +178,8 @@
 	}
 
 	function formatMonth(monthStr) {
-		const date = new Date(monthStr + '-01')
+		const [year, month] = monthStr.split('-').map(Number)
+		const date = new Date(year, month - 1, 1)
 		return date.toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' })
 	}
 </script>
