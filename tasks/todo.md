@@ -2,20 +2,84 @@
 
 ## En attente
 
-### Migrer les pages de Svelte 4 legacy vers Svelte 5 runes
+### Phase 1 — Stabilisation
+
+#### 1A. Finaliser export/import JSON et valider GitHub Pages
+
+**Contexte** : la feature export/import JSON est maintenant commitée et la suite E2E passe. Il reste à fermer proprement la phase de stabilisation en validant le build de production et le comportement sur GitHub Pages.
+
+**Travail à faire** :
+- [ ] Vérifier le build de prod (`npm run build`)
+- [ ] Pousser `trunk`
+- [ ] Vérifier le déploiement GitHub Pages en conditions réelles
+- [ ] Confirmer que l'export/import fonctionne avec `BASE_PATH`
+
+#### 1B. Migrer `src/routes/transactions/+page.svelte` vers Svelte 5 runes
+
+**Contexte** : `transactions/+page.svelte` reste en syntaxe legacy Svelte 4. C'est la première migration à faire avant de toucher le dashboard, car le périmètre est plus simple et le risque est plus faible.
+
+**Travail à faire** :
+- [ ] Remplacer les états legacy par des runes Svelte 5 (`$state`, `$derived` si nécessaire)
+- [ ] Éliminer les warnings de réactivité sur la page transactions
+- [ ] Valider : `npm run build`
+- [ ] Valider : tests E2E transactions
+
+**Règle** : migrer par petits incréments, avec vérification après chaque sous-étape.
+
+#### 1C. Migrer `src/routes/+page.svelte` (dashboard) vers Svelte 5 runes
 
 **Contexte** : lors de l'implémentation de l'export/import JSON (mars 2026), le code-reviewer a signalé que `src/routes/+page.svelte` utilise encore la syntaxe Svelte 4 (`$:`, `let` sans `$state`). La tentative de migration partielle (`$derived` sur `hasBarData` seul) a cassé la réactivité et fait passer les tests de 84 → 69. Revert effectué.
 
 **Travail à faire** :
 - [ ] `src/routes/+page.svelte` — déclarer toutes les variables réactives avec `$state()` (`dashboard`, `loading`, `error`, `barData`, `importError`, `importSuccess`, `exportSuccess`, `showImportModal`, `pendingImportData`, `pendingComparison`, `replaceCountdown`) et remplacer `$:` par `$derived`
-- [ ] Auditer les autres pages (`transactions`, `budget`, `goals`) pour le même problème
-- [ ] Valider : `npm run build` sans warning `non_reactive_update` + `npm run test:e2e` 84/84
+- [ ] Valider après chaque étape : tests dashboard + integration
+- [ ] Valider en fin de migration : `npm run build` + `npm run test:e2e`
 
 **Règle** : migrer page par page, valider les tests après chaque page.
 
 ---
 
-## Fonctionnalités à implémenter (backlog)
+### Phase 2 — Qualité CSS
+
+#### 2A. Extraire les couleurs hardcodées des charts SVG
+
+- [ ] Ajouter les variables CSS manquantes dans `src/app.css`
+- [ ] Remplacer les couleurs hardcodées dans `BarChart.svelte`, `LineChart.svelte`, `PieChart.svelte`
+- [ ] Valider : build + tests charts
+
+#### 2B. Normaliser les overlays et fonds RGBA
+
+- [ ] Ajouter des variables CSS dédiées pour overlays/états
+- [ ] Remplacer les valeurs RGBA hardcodées dans dashboard, budget, goals et transactions
+- [ ] Valider : tests accessibilité
+
+---
+
+### Phase 3 — Testabilité et couverture
+
+#### 3A. Renforcer les sélecteurs E2E
+
+- [ ] Ajouter `data-testid="transaction-item"` sur les lignes de transactions
+- [ ] Ajouter `data-testid="goal-card"` sur les cartes objectifs
+- [ ] Mettre à jour les specs existantes pour utiliser ces sélecteurs
+
+#### 3B. Ajouter un test de persistance après rechargement
+
+- [ ] Créer un test d'intégration qui vérifie la persistance IndexedDB après reload
+
+#### 3C. Évaluer le support multi-navigateurs
+
+- [ ] Ajouter Firefox et WebKit dans `playwright.config.ts`
+- [ ] Lancer la suite sur 3 navigateurs
+- [ ] Décider si Chromium reste seul en CI
+
+#### 3D. Tester le swipe sur la page budget
+
+- [ ] Ajouter un test E2E de swipe gauche/droite sur `/budget`
+
+---
+
+## Fonctionnalités à implémenter (backlog produit)
 
 Voir inventaire complet dans `tasks/plan-features-export-charts-swipe.md`.
 
