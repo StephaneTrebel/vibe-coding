@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "tasks/plan-audit-mars-2026.md",
+                "file": "tasks/todo.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "plan-audit-mars-2026"
+              "title": "todo"
             }
           }
         ]
@@ -185,33 +185,34 @@
   },
   "active": "714104856e2dab39",
   "lastOpenFiles": [
-    "frontend/test-results/debug-export2-debug-export-handler-chromium/error-context.md",
-    "frontend/test-results/debug-export2-debug-export-handler-chromium/test-failed-1.png",
-    "frontend/test-results/debug-export2-debug-export-handler-chromium",
+    "frontend/vite.config.js.timestamp-1774985443977-95f78abf508f08.mjs",
+    "frontend/vite.config.js.timestamp-1774985443030-5523f9dc662828.mjs",
+    "tasks/plan-audit-mars-2026.md",
     "frontend/test-results",
-    "frontend/vite.config.js.timestamp-1774983578733-d257662b30356.mjs",
-    "frontend/e2e/debug-export2.spec.ts.tmp.400210.1774983573917",
-    "frontend/vite.config.js.timestamp-1774983565801-b27b0ec51b9db8.mjs",
-    "frontend/vite.config.js.timestamp-1774983564824-08211583da3e9.mjs",
-    "frontend/vite.config.js.timestamp-1774983548817-fbc6bb4e86f7e8.mjs",
-    "frontend/vite.config.js.timestamp-1774983536406-a4caec0efa2538.mjs",
-    "frontend/e2e/debug-export2.spec.ts",
-    "frontend/e2e/debug-export2.spec.ts.tmp.400210.1774983531513",
-    "frontend/test-results/export-import-Export-Impor-8ec46-port-export-success-message-chromium/error-context.md",
-    "frontend/test-results/export-import-Export-Impor-8ec46-port-export-success-message-chromium/test-failed-1.png",
+    "frontend/vite.config.js.timestamp-1774984744814-38b42a373bc94.mjs",
+    "frontend/vite.config.js.timestamp-1774984670654-7f30fabe6dad48.mjs",
+    "frontend/vite.config.js.timestamp-1774984157537-b6c9522cf6f4d.mjs",
     "frontend/test-results/export-import-Export-Impor-085ac-xport-export-empty-database-chromium/error-context.md",
     "frontend/test-results/export-import-Export-Impor-085ac-xport-export-empty-database-chromium/test-failed-1.png",
+    "frontend/test-results/export-import-Export-Impor-085ac-xport-export-empty-database-chromium",
+    "frontend/vite.config.js.timestamp-1774984108265-2f002501808678.mjs",
+    "frontend/test-results/export-import-Export-Impor-8ec46-port-export-success-message-chromium/error-context.md",
+    "frontend/test-results/export-import-Export-Impor-8ec46-port-export-success-message-chromium/test-failed-1.png",
+    "frontend/test-results/export-import-Export-Impor-8ec46-port-export-success-message-chromium",
+    "frontend/test-results/export-import-Export-Import-JSON-Export-export-filename-chromium/error-context.md",
+    "frontend/test-results/export-import-Export-Import-JSON-Export-export-filename-chromium/test-failed-1.png",
+    "frontend/test-results/export-import-Export-Import-JSON-Export-export-filename-chromium",
+    "frontend/vite.config.js.timestamp-1774984031541-760e87660cd3e8.mjs",
+    "frontend/test-results/debug-export2-debug-export-handler-chromium/error-context.md",
+    "frontend/test-results/debug-export2-debug-export-handler-chromium/test-failed-1.png",
     "frontend/test-results/export-import-Export-Impor-456e5-onner-merge-upserts-budgets-chromium/error-context.md",
     "frontend/test-results/export-import-Export-Impor-456e5-onner-merge-upserts-budgets-chromium/test-failed-1.png",
     "frontend/test-results/export-import-Export-Import-JSON-Export-export-with-data-chromium/error-context.md",
     "frontend/test-results/export-import-Export-Import-JSON-Export-export-with-data-chromium/test-failed-1.png",
-    "frontend/test-results/export-import-Export-Import-JSON-Export-export-filename-chromium/error-context.md",
-    "frontend/test-results/export-import-Export-Import-JSON-Export-export-filename-chromium/test-failed-1.png",
     "frontend/test-results/debug-export2-debug-export-click-chromium/error-context.md",
     "frontend/test-results/debug-export2-debug-export-click-chromium/test-failed-1.png",
     "frontend/test-results/debug-export2-debug-export-handler-runs-chromium/error-context.md",
     "frontend/test-results/debug-export2-debug-export-handler-runs-chromium/test-failed-1.png",
-    "tasks/todo.md",
-    "tasks/plan-audit-mars-2026.md"
+    "tasks/todo.md"
   ]
 }
