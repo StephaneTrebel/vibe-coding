@@ -4,7 +4,11 @@
 	// period: 6 | 12
 	let { data = [], period = 6 } = $props()
 
-	let selectedPeriod = $state(period)
+	let selectedPeriod = $state(6)
+
+	$effect(() => {
+		selectedPeriod = period
+	})
 
 	const WIDTH = 600
 	const HEIGHT = 280
