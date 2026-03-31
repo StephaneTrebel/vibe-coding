@@ -73,7 +73,13 @@
 - [ ] Lancer la suite sur 3 navigateurs
 - [ ] Décider si Chromium reste seul en CI
 
-#### 3D. Tester le swipe sur la page budget
+#### 3D. Ajouter un smoke test du site déployé
+
+- [ ] Définir un scénario Playwright léger exécuté contre l'URL GitHub Pages publiée
+- [ ] Vérifier au minimum : chargement de l'accueil, navigation entre pages, reload d'une route profonde, flux export/import minimal
+- [ ] Décider si ce smoke test tourne à chaque déploiement Pages ou en vérification manuelle post-déploiement
+
+#### 3E. Tester le swipe sur la page budget
 
 - [ ] Ajouter un test E2E de swipe gauche/droite sur `/budget`
 
