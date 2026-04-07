@@ -8,6 +8,46 @@ const __dirname = import.meta.dirname
 // Helpers
 // ---------------------------------------------------------------------------
 
+function readFixtureContent(fixtureName: string) {
+	const fixturePath = path.join(__dirname, 'fixtures', fixtureName)
+	return fs.readFileSync(fixturePath, 'utf-8')
+}
+
+function readFixtureJSON(fixtureName: string) {
+	return JSON.parse(readFixtureContent(fixtureName))
+}
+
+function formatMonth(month: string) {
+	const [year, monthNumber] = month.split('-').map(Number)
+	return new Date(year, monthNumber - 1, 1).toLocaleDateString('fr-FR', {
+		month: 'long',
+		year: 'numeric',
+	})
+}
+
+async function goToBudgetMonth(page: Page, targetMonth: string) {
+	await expect(page.locator('#budget')).toBeVisible()
+
+	const targetLabel = formatMonth(targetMonth)
+	const [targetYear, targetMonthNumber] = targetMonth.split('-').map(Number)
+	const now = new Date()
+	const currentYear = now.getFullYear()
+	const currentMonthNumber = now.getMonth() + 1
+	const deltaMonths = (targetYear - currentYear) * 12 + (targetMonthNumber - currentMonthNumber)
+	const buttonLabel = deltaMonths < 0 ? 'Mois précédent' : 'Mois suivant'
+	const monthTitle = page.locator('.month-title')
+
+	if ((await monthTitle.textContent())?.trim() === targetLabel) return
+
+	for (let i = 0; i < Math.abs(deltaMonths); i++) {
+		const previousLabel = (await monthTitle.textContent())?.trim()
+		await page.getByRole('button', { name: buttonLabel }).click()
+		await expect(monthTitle).not.toHaveText(previousLabel ?? '')
+	}
+
+	await expect(monthTitle).toHaveText(targetLabel)
+}
+
 async function addTransaction(
 	page: Page,
 	{
@@ -41,8 +81,7 @@ async function addTransaction(
 }
 
 async function triggerImport(page: Page, fixtureName: string) {
-	const fixturePath = path.join(__dirname, 'fixtures', fixtureName)
-	const fileContent = fs.readFileSync(fixturePath, 'utf-8')
+	const fileContent = readFixtureContent(fixtureName)
 	await waitForDashboardReady(page)
 	await page.evaluate(
 		({ content, name }) => {
@@ -392,23 +431,29 @@ test.describe('Export/Import JSON', () => {
 		})
 
 		test('merge-upserts-budgets', async ({ page }) => {
-			// Seed un budget 2026-03 à 400€
+			const importedBudget = readFixtureJSON('valid-full.json').data.budgets[0]
+
+			// Seed un budget sur le même mois que la fixture
 			await page.goto('/budget')
+			await goToBudgetMonth(page, importedBudget.month)
 			await page.fill('#budget', '400.00')
 			await page.locator('button:has-text("Enregistrer")').click()
 			await expect(page.locator('text=400,00 €').first()).toBeVisible()
 
 			await page.goto('/')
-			// valid-full.json contient budget 2026-03 à 150€
+			// valid-full.json contient le budget attendu pour ce même mois
 			await triggerImport(page, 'valid-full.json')
 			await expect(page.getByTestId('import-modal')).toBeVisible()
 
 			await page.getByTestId('import-action-merge').click()
 			await expect(page.getByTestId('import-modal')).not.toBeVisible()
+			await expect(page.getByTestId('import-success-message')).toBeVisible()
+			await expect(page.getByTestId('import-success-message')).toContainText('fusion')
 
-			// Le budget 2026-03 doit être remplacé par 150€
+			// Le budget du mois porté par la fixture doit être remplacé
 			await page.goto('/budget')
-			await expect(page.locator('text=150,00 €').first()).toBeVisible()
+			await goToBudgetMonth(page, importedBudget.month)
+			await expect(page.locator(`text=${importedBudget.amount.toFixed(2).replace('.', ',')} €`).first()).toBeVisible()
 		})
 
 		test('merge-keeps-existing', async ({ page }) => {

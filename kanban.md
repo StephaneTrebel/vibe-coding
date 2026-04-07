@@ -1,4 +1,5 @@
 ---
+
 title: Budgeteen
 type: kanban
 status: active
@@ -6,14 +7,12 @@ tags:
   - obsidian
   - kanban
   - mon-budget
-
 kanban-plugin: board
 
 ---
 
 ## To-do
 
-- [ ] Stabiliser complètement les tests E2E export/import
 - [ ] 3A Renforcer les sélecteurs E2E
 - [ ] 3B Vérifier la persistance après rechargement
 - [ ] 3C Évaluer le support multi-navigateurs
@@ -27,11 +26,14 @@ kanban-plugin: board
 - [ ] Rendre le BarChart du dashboard cliquable vers `/budget`
 - [ ] Ajouter un hint d'animation pour le swipe budget
 
+
 ## In Progress
+
 
 ## Done
 
 **Complete**
+- [ ] Stabiliser complètement les tests E2E export/import
 - [ ] Réorganisation documentaire Obsidian: consolidation vers `research.md` et `plan.md`
 - [ ] Pivot architecture vers une PWA locale offline-first
 - [ ] Mettre en place la navbar responsive mobile
@@ -44,6 +46,9 @@ kanban-plugin: board
 - [ ] Migrer le dashboard `src/routes/+page.svelte` vers Svelte 5
 - [ ] Extraire les couleurs hardcodées des charts SVG
 - [ ] Normaliser les overlays et fonds RGBA
+
+
+
 
 %% kanban:settings
 ```

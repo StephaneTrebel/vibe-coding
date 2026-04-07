@@ -18,15 +18,6 @@ updated: "2026-04-07"
 
 Ce document contient uniquement les actions restantes à exécuter. Les analyses et l'historique ont été déplacés dans `research.md`.
 
-## En cours
-
-### Stabiliser complètement les tests E2E export/import
-
-- [ ] finaliser la stratégie de test export compatible Playwright
-- [ ] terminer le chantier de séparation payload / téléchargement si ce n'est pas déjà clos dans le code
-- [ ] supprimer les fichiers de diagnostic devenus inutiles
-- [ ] relancer les vérifications ciblées export/import
-
 ## Phase 3 — Testabilité et couverture
 
 ### 3A. Renforcer les sélecteurs E2E
