@@ -31,6 +31,7 @@ kanban-plugin: board
 
 ## Done
 
+**Complete**
 - [ ] Réorganisation documentaire Obsidian: consolidation vers `research.md` et `plan.md`
 - [ ] Pivot architecture vers une PWA locale offline-first
 - [ ] Mettre en place la navbar responsive mobile
