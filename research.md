@@ -94,15 +94,20 @@ Cette dette reste utile comme mémoire, même si une partie a déjà été trait
 - évaluer un support multi-navigateurs Playwright
 - compléter les tests tactiles sur la navigation par swipe
 
-## Sujet en cours identifié
+## Sujet récemment refermé
 
-Un plan d'implémentation spécifique signale encore un chantier ouvert autour des tests E2E export/import :
+Le chantier de stabilisation des tests E2E export/import est désormais refermé.
 
-- cause import identifiée : gestion de l'événement `change` sur input file en contexte Playwright/Svelte 5
-- cause export identifiée : téléchargement blob non interceptable via `page.waitForEvent('download')`
-- état historique connu : la partie import était traitée, la partie export et le nettoyage de fichiers de diagnostic restaient planifiés
+Constat final conservé :
 
-Ce sujet doit être considéré comme une piste active tant qu'il n'a pas été refermé explicitement dans le code et les tests.
+- l'échec réel restant ne venait pas d'un bug produit du merge, mais d'un test couplé au mois courant
+- la correction retenue a consisté à réaligner le test sur la fixture utilisée
+- le test concerné attend désormais un signal fonctionnel de fin de fusion avant d'asserter
+- le spec `export-import` passe intégralement après cette correction
+
+Trace documentaire :
+
+- [[tasks/stabiliser-tests-e2e-export-import/task]]
 
 ## Décisions produit et UX à conserver
 

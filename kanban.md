@@ -33,7 +33,7 @@ kanban-plugin: board
 ## Done
 
 **Complete**
-- [ ] Stabiliser complètement les tests E2E export/import
+- [ ] Stabiliser complètement les tests E2E export/import [[tasks/stabiliser-tests-e2e-export-import/task|note]]
 - [ ] Réorganisation documentaire Obsidian: consolidation vers `research.md` et `plan.md`
 - [ ] Pivot architecture vers une PWA locale offline-first
 - [ ] Mettre en place la navbar responsive mobile
