@@ -1,13 +1,15 @@
 ---
-title: Plan
-type: plan
-status: active
+id: plan
+aliases: []
 tags:
   - obsidian
   - plan
   - mon-budget
-created: 2026-04-07
-updated: 2026-04-07
+created: "2026-04-07"
+status: active
+title: Plan
+type: plan
+updated: "2026-04-07"
 ---
 
 # Plan
@@ -72,4 +74,4 @@ Ce document contient uniquement les actions restantes à exécuter. Les analyses
 
 - travailler par unités courtes et vérifiables
 - privilégier les validations Playwright ciblées avant la suite complète
-- mettre à jour `budgeteen.md` dès qu'une unité change d'état
+- mettre à jour `kanban.md` dès qu'une unité change d'état
