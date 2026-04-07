@@ -27,6 +27,3 @@ backend/target/
 # Playwright
 playwright-report
 test-results
-
-# Obsidian
-.obsidian/

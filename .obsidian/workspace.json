@@ -13,33 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "AGENTS.md",
+                "file": "plan.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-<<<<<<< Updated upstream
-              "title": "todo"
-||||||| Stash base
-              "title": "todo"
-            }
-          },
-          {
-            "id": "da2e98c5e55a0c03",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "tasks/todo.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "todo"
-            }
-=======
-              "title": "AGENTS"
->>>>>>> Stashed changes
+              "title": "plan"
             }
           }
         ]
@@ -201,11 +180,17 @@
       "daily-notes:Ouvrir la note quotidienne": false,
       "templates:Insérer le modèle": false,
       "command-palette:Ouvrir la palette de commandes": false,
-      "bases:Créer une nouvelle base": false
+      "bases:Créer une nouvelle base": false,
+      "obsidian-kanban:Create new board": false
     }
   },
   "active": "714104856e2dab39",
   "lastOpenFiles": [
+    "research.md",
+    "plan.md",
+    "budgeteen.md",
+    "RTK.md",
+    "AGENTS.md",
     "DEPLOY.md",
     "tasks/todo.md",
     "frontend/test-results",
@@ -222,21 +207,12 @@
     "frontend/vite.config.js.timestamp-1774987007468-23b4b4930cd86.mjs",
     "frontend/vite.config.js.timestamp-1774987007126-66ec5a804874c.mjs",
     "tasks/plan-audit-mars-2026.md",
-    "frontend/test-results",
-    "frontend/vite.config.js.timestamp-1774984744814-38b42a373bc94.mjs",
-    "frontend/vite.config.js.timestamp-1774984670654-7f30fabe6dad48.mjs",
-    "frontend/vite.config.js.timestamp-1774984157537-b6c9522cf6f4d.mjs",
     "frontend/test-results/export-import-Export-Impor-085ac-xport-export-empty-database-chromium/error-context.md",
     "frontend/test-results/export-import-Export-Impor-085ac-xport-export-empty-database-chromium/test-failed-1.png",
-    "frontend/test-results/export-import-Export-Impor-085ac-xport-export-empty-database-chromium",
-    "frontend/vite.config.js.timestamp-1774984108265-2f002501808678.mjs",
     "frontend/test-results/export-import-Export-Impor-8ec46-port-export-success-message-chromium/error-context.md",
     "frontend/test-results/export-import-Export-Impor-8ec46-port-export-success-message-chromium/test-failed-1.png",
-    "frontend/test-results/export-import-Export-Impor-8ec46-port-export-success-message-chromium",
     "frontend/test-results/export-import-Export-Import-JSON-Export-export-filename-chromium/error-context.md",
     "frontend/test-results/export-import-Export-Import-JSON-Export-export-filename-chromium/test-failed-1.png",
-    "frontend/test-results/export-import-Export-Import-JSON-Export-export-filename-chromium",
-    "frontend/vite.config.js.timestamp-1774984031541-760e87660cd3e8.mjs",
     "frontend/test-results/debug-export2-debug-export-handler-chromium/error-context.md",
     "frontend/test-results/debug-export2-debug-export-handler-chromium/test-failed-1.png",
     "frontend/test-results/export-import-Export-Import-JSON-Export-export-with-data-chromium/error-context.md",
@@ -244,7 +220,6 @@
     "frontend/test-results/debug-export2-debug-export-click-chromium/error-context.md",
     "frontend/test-results/debug-export2-debug-export-click-chromium/test-failed-1.png",
     "frontend/test-results/debug-export2-debug-export-handler-runs-chromium/error-context.md",
-    "frontend/test-results/debug-export2-debug-export-handler-runs-chromium/test-failed-1.png",
-    "tasks/todo.md"
+    "frontend/test-results/debug-export2-debug-export-handler-runs-chromium/test-failed-1.png"
   ]
 }
