@@ -11,20 +11,14 @@
             "id": "0d98f5ea85bdad1d",
             "type": "leaf",
             "state": {
-              "type": "kanban",
+              "type": "markdown",
               "state": {
-                "file": "kanban.md",
-                "kanbanViewState": {
-                  "kanban-plugin": "board",
-                  "list-collapse": [
-                    false,
-                    false,
-                    false
-                  ]
-                }
+                "file": "docs/prd/features/goals.md",
+                "mode": "source",
+                "source": false
               },
-              "icon": "lucide-trello",
-              "title": "kanban"
+              "icon": "lucide-file",
+              "title": "goals"
             }
           }
         ]
@@ -192,8 +186,31 @@
   },
   "active": "0d98f5ea85bdad1d",
   "lastOpenFiles": [
-    "tasks/stabiliser-tests-e2e-export-import/task.md",
+    "docs/prd/question-backlog.md",
+    "docs/prd/features/export-import.md",
+    "docs/prd/features/dashboard.md",
+    "docs/prd/decisions/adr-002-github-pages-base-path.md",
+    "docs/prd/decisions/adr-003-json-export-import.md",
+    "docs/prd/decisions/adr-001-local-first-no-backend.md",
+    "docs/prd/features/budget.md",
+    "docs/prd/features/transactions.md",
+    "docs/prd/features/pwa-offline.md",
+    "docs/prd/features/goals.md",
+    "docs/prd/product/mon-budget.md",
+    "docs/prd/evidence/repo-truth.md",
+    "docs/prd/evidence/source-index.md",
+    "docs/prd/evidence/test-coverage-map.md",
+    "docs/prd/product/assumptions-and-gaps.md",
+    "docs/prd/product/glossary.md",
+    "docs/prd/README.md",
     "kanban.md",
+    "docs/prd/product/success-metrics.md",
+    "docs/prd/product",
+    "docs/prd/features",
+    "docs/prd/evidence",
+    "docs/prd/decisions",
+    "docs/prd",
+    "tasks/stabiliser-tests-e2e-export-import/task.md",
     "frontend/test-results",
     "frontend/test-results/export-import-Export-Impor-456e5-onner-merge-upserts-budgets-chromium/error-context.md",
     "frontend/test-results/export-import-Export-Impor-456e5-onner-merge-upserts-budgets-chromium/test-failed-1.png",
@@ -201,35 +218,17 @@
     "frontend/vite.config.js.timestamp-1775591256324-2b18720789c838.mjs",
     "frontend/vite.config.js.timestamp-1775591221892-24540717fa3968.mjs",
     "frontend/vite.config.js.timestamp-1775591197159-3348e71892795.mjs",
-    "frontend/vite.config.js.timestamp-1775591167059-437e5484e77d9.mjs",
-    "frontend/vite.config.js.timestamp-1775590901397-7e5c7d65037bc.mjs",
-    "frontend/vite.config.js.timestamp-1775590818452-7f31481c906ef.mjs",
     "frontend/node_modules/@sveltejs/adapter-static/README.md",
-    "tasks/stabiliser-tests-e2e-export-import",
     "@task/stabiliser-tests-e2e-export-import/task.md",
-    "@task/stabiliser-tests-e2e-export-import",
     "plan.md",
     "budgeteen.md",
     "research.md",
-    "RTK.md",
-    "AGENTS.md",
-    "DEPLOY.md",
-    "tasks/todo.md",
-    "tasks/plan-migration-transactions-svelte5.md",
-    "tasks/plan-audit-mars-2026.md",
-    "frontend/test-results/export-import-Export-Impor-085ac-xport-export-empty-database-chromium/error-context.md",
     "frontend/test-results/export-import-Export-Impor-085ac-xport-export-empty-database-chromium/test-failed-1.png",
-    "frontend/test-results/export-import-Export-Impor-8ec46-port-export-success-message-chromium/error-context.md",
     "frontend/test-results/export-import-Export-Impor-8ec46-port-export-success-message-chromium/test-failed-1.png",
-    "frontend/test-results/export-import-Export-Import-JSON-Export-export-filename-chromium/error-context.md",
     "frontend/test-results/export-import-Export-Import-JSON-Export-export-filename-chromium/test-failed-1.png",
-    "frontend/test-results/debug-export2-debug-export-handler-chromium/error-context.md",
     "frontend/test-results/debug-export2-debug-export-handler-chromium/test-failed-1.png",
-    "frontend/test-results/export-import-Export-Import-JSON-Export-export-with-data-chromium/error-context.md",
     "frontend/test-results/export-import-Export-Import-JSON-Export-export-with-data-chromium/test-failed-1.png",
-    "frontend/test-results/debug-export2-debug-export-click-chromium/error-context.md",
     "frontend/test-results/debug-export2-debug-export-click-chromium/test-failed-1.png",
-    "frontend/test-results/debug-export2-debug-export-handler-runs-chromium/error-context.md",
     "frontend/test-results/debug-export2-debug-export-handler-runs-chromium/test-failed-1.png"
   ]
 }
