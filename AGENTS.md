@@ -233,6 +233,5 @@ frontend/e2e/           # Playwright tests (8 spec files)
 
 | Issue | Location | Severity |
 |-------|----------|----------|
-| `LineChart.svelte` uses Svelte 4 `on:click` syntax instead of Svelte 5 `onclick` | `src/lib/LineChart.svelte` | Low — deprecation warning |
 
 @RTK.md
