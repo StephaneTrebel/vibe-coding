@@ -27,3 +27,6 @@ backend/target/
 # Playwright
 playwright-report
 test-results
+
+# Skills
+skills
